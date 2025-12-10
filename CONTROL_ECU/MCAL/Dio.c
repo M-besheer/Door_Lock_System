@@ -83,8 +83,6 @@ void Dio_Init(u8 PortId, u8 PinId, u8 Direction)
     else
     {
         GPIOPinTypeGPIOInput(Tiva_Port_Base, Tiva_Pin_Mask);
-        // Defaulting to PULL-UP for buttons
-        GPIOPadConfigSet(Tiva_Port_Base, Tiva_Pin_Mask, GPIO_STRENGTH_2MA, GPIO_PIN_TYPE_STD_WPU);
     }
 }
 
@@ -97,8 +95,12 @@ void Dio_WriteChannel(u8 PortId, u8 PinId, u8 Level)
 
     /* 1. Translate Generic PORT to Address */
     switch(PortId) {
+        case PORT_A: Tiva_Port_Base = GPIO_PORTA_BASE; break; // Added
+        case PORT_B: Tiva_Port_Base = GPIO_PORTB_BASE; break; // Added
+        case PORT_C: Tiva_Port_Base = GPIO_PORTC_BASE; break; // Added (Safe for PC4-PC7)
+        case PORT_D: Tiva_Port_Base = GPIO_PORTD_BASE; break; // Added
+        case PORT_E: Tiva_Port_Base = GPIO_PORTE_BASE; break; // Added
         case PORT_F: Tiva_Port_Base = GPIO_PORTF_BASE; break;
-        // Add other ports here later
         default: return; // SAFETY EXIT: If port is wrong, do nothing!
     }
 
@@ -134,5 +136,90 @@ u8 Dio_ReadChannel(u8 PortId, u8 PinId)
         return LOW;
     } else {
         return HIGH;
+    }
+}
+
+/* ================================================================= */
+/* ENABLE/DISABLE PULL-UP RESISTOR                                   */
+/* ================================================================= */
+void Dio_SetPUR(uint8_t port, uint8_t pin, uint8_t enable)
+{
+    u32 Tiva_Port_Base = 0;
+    u8  Tiva_Pin_Mask = (1 << pin);
+
+    /* 1. Map Generic PORT to TivaWare Base Address */
+    switch(port)
+    {
+        case PORT_A: Tiva_Port_Base = GPIO_PORTA_BASE; break;
+        case PORT_B: Tiva_Port_Base = GPIO_PORTB_BASE; break;
+        case PORT_C: Tiva_Port_Base = GPIO_PORTC_BASE; break;
+        case PORT_D: Tiva_Port_Base = GPIO_PORTD_BASE; break;
+        case PORT_E: Tiva_Port_Base = GPIO_PORTE_BASE; break;
+        case PORT_F: Tiva_Port_Base = GPIO_PORTF_BASE; break;
+        default: return;
+    }
+
+    /* 2. UNLOCK SPECIAL PINS (PF0 & PD7) */
+    /* Necessary because we might have re-locked them in Dio_Init */
+    if( (port == PORT_F && pin == PIN_0) || (port == PORT_D && pin == PIN_7) )
+    {
+        HWREG(Tiva_Port_Base + GPIO_O_LOCK) = GPIO_LOCK_KEY; 
+        HWREG(Tiva_Port_Base + GPIO_O_CR)  |= Tiva_Pin_Mask; 
+    }
+
+    /* 3. Configure Pad */
+    if(enable)
+    {
+        /* Enable Weak Pull-Up (Standard 2mA strength) */
+        GPIOPadConfigSet(Tiva_Port_Base, Tiva_Pin_Mask, 
+                         GPIO_STRENGTH_2MA, GPIO_PIN_TYPE_STD_WPU);
+    }
+    else
+    {
+        /* Disable Resistor (Set to Standard Floating) */
+        GPIOPadConfigSet(Tiva_Port_Base, Tiva_Pin_Mask, 
+                         GPIO_STRENGTH_2MA, GPIO_PIN_TYPE_STD);
+    }
+}
+
+/* ================================================================= */
+/* ENABLE/DISABLE PULL-DOWN RESISTOR                                 */
+/* ================================================================= */
+void Dio_SetPDR(uint8_t port, uint8_t pin, uint8_t enable)
+{
+    u32 Tiva_Port_Base = 0;
+    u8  Tiva_Pin_Mask = (1 << pin);
+
+    /* 1. Map Generic PORT to TivaWare Base Address */
+    switch(port)
+    {
+        case PORT_A: Tiva_Port_Base = GPIO_PORTA_BASE; break;
+        case PORT_B: Tiva_Port_Base = GPIO_PORTB_BASE; break;
+        case PORT_C: Tiva_Port_Base = GPIO_PORTC_BASE; break;
+        case PORT_D: Tiva_Port_Base = GPIO_PORTD_BASE; break;
+        case PORT_E: Tiva_Port_Base = GPIO_PORTE_BASE; break;
+        case PORT_F: Tiva_Port_Base = GPIO_PORTF_BASE; break;
+        default: return;
+    }
+
+    /* 2. UNLOCK SPECIAL PINS (PF0 & PD7) */
+    if( (port == PORT_F && pin == PIN_0) || (port == PORT_D && pin == PIN_7) )
+    {
+        HWREG(Tiva_Port_Base + GPIO_O_LOCK) = GPIO_LOCK_KEY; 
+        HWREG(Tiva_Port_Base + GPIO_O_CR)  |= Tiva_Pin_Mask; 
+    }
+
+    /* 3. Configure Pad */
+    if(enable)
+    {
+        /* Enable Weak Pull-Down (Standard 2mA strength) */
+        GPIOPadConfigSet(Tiva_Port_Base, Tiva_Pin_Mask, 
+                         GPIO_STRENGTH_2MA, GPIO_PIN_TYPE_STD_WPD);
+    }
+    else
+    {
+        /* Disable Resistor (Set to Standard Floating) */
+        GPIOPadConfigSet(Tiva_Port_Base, Tiva_Pin_Mask, 
+                         GPIO_STRENGTH_2MA, GPIO_PIN_TYPE_STD);
     }
 }

@@ -2119,6 +2119,12 @@
         <file>
             <name>$PROJ_DIR$\HAL\Led.h</name>
         </file>
+        <file>
+            <name>$PROJ_DIR$\HAL\Memory_Manager.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\HAL\Memory_Manager.h</name>
+        </file>
     </group>
     <group>
         <name>MCAL</name>
@@ -2127,6 +2133,18 @@
         </file>
         <file>
             <name>$PROJ_DIR$\MCAL\Dio.h</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\MCAL\EEPROM_Driver.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\MCAL\EEPROM_Driver.h</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\MCAL\SYSTICK.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\MCAL\SYSTICK.h</name>
         </file>
     </group>
     <group>
