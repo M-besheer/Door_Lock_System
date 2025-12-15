@@ -3,6 +3,7 @@
 
 #include "../UTILS/std_types.h"
 #include <stdbool.h>
+#include <stdint.h>
 
 /* ================================================================= */
 /* FUNCTION PROTOTYPES                                               */
