@@ -1,0 +1,59 @@
+#include "HAL/Lcd.h"
+#include "HAL/Led.h"
+#include "HAL/Button.h"
+
+// Simple delay helper
+void Delay_Test(unsigned long count) {
+    volatile unsigned long i;
+    for(i=0; i<count; i++);
+}
+
+int main(void)
+{
+     /* 1. Initialize Hardware */
+    Led_RedInit();    // Init LEDs (PF1, PF2, PF3)
+    Led_BlueInit();
+    Led_GreenInit();
+    Button_Init(); // Init Button (PF0 - Requires Unlock!)
+
+    /* Ensure start state is OFF */
+    Led_RedTurnOff();
+    Led_BlueTurnOff();
+    Led_GreenTurnOff();
+    
+    Lcd_Init();       // Init I2C LCD
+
+    /* ========================================== */
+    /* 2. STARTUP SCREEN                          */
+    /* ========================================== */
+    Lcd_Clear();
+    Lcd_DisplayString("System Ready...");
+    Delay_Test(1000000); // Wait a moment to read it
+    
+    Lcd_Clear();
+    Lcd_DisplayString("Press SW2...");
+    Lcd_GoToRowColumn(1, 0); // Move to 2nd line
+    Lcd_DisplayString("ana bgd zehe2t");
+
+    /* 3. Main Loop */
+    while(1)
+    {
+        if(Button_Read() == TRUE)
+        {
+             // Turn Green, update Screen
+             Led_GreenTurnOn();
+             Lcd_Clear();
+             Lcd_DisplayString("ACCESS GRANTED!!");
+             
+             // Wait for release
+             while(Button_Read() == TRUE); 
+             
+             /* D. Reset System (Optional) */
+            Delay_Test(1000000); // Keep message for a bit
+            Led_GreenTurnOff();
+            Lcd_Clear();
+            Lcd_DisplayString("Press SW2...");
+        }
+    }
+    return 0;
+}

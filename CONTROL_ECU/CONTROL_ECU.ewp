@@ -338,12 +338,14 @@
                     <state>C:\ti\TivaWare_C_Series-2.2.0.295\inc</state>
                     <state>C:\ti\TivaWare_C_Series-2.2.0.295\driverlib</state>
                     <state>C:\ti\TivaWare_C_Series-2.2.0.295</state>
-                    <state>C:\Users\Lenovo\Desktop\Senior-1\Fall 2025\CSE211 Introduction to Embedded Systems\Project\Door_Lock_System\CONTROL_ECU\CONFIG</state>
-                    <state>C:\Users\Lenovo\Desktop\Senior-1\Fall 2025\CSE211 Introduction to Embedded Systems\Project\Door_Lock_System\CONTROL_ECU\APP</state>
-                    <state>C:\Users\Lenovo\Desktop\Senior-1\Fall 2025\CSE211 Introduction to Embedded Systems\Project\Door_Lock_System\CONTROL_ECU\HAL</state>
-                    <state>C:\Users\Lenovo\Desktop\Senior-1\Fall 2025\CSE211 Introduction to Embedded Systems\Project\Door_Lock_System\CONTROL_ECU\MCAL</state>
-                    <state>C:\Users\Lenovo\Desktop\Senior-1\Fall 2025\CSE211 Introduction to Embedded Systems\Project\Door_Lock_System\CONTROL_ECU\SERVICES</state>
-                    <state>C:\Users\Lenovo\Desktop\Senior-1\Fall 2025\CSE211 Introduction to Embedded Systems\Project\Door_Lock_System\CONTROL_ECU\UTILS</state>
+                    <state>C:\Users\moham\Desktop\Embedded proj\Door_Lock_System\CONTROL_ECU</state>
+                    <state>C:\Users\moham\Desktop\Embedded proj\Door_Lock_System\CONTROL_ECU\APP</state>
+                    <state>C:\Users\moham\Desktop\Embedded proj\Door_Lock_System\CONTROL_ECU\CONFIG</state>
+                    <state>C:\Users\moham\Desktop\Embedded proj\Door_Lock_System\CONTROL_ECU\Debug</state>
+                    <state>C:\Users\moham\Desktop\Embedded proj\Door_Lock_System\CONTROL_ECU\HAL</state>
+                    <state>C:\Users\moham\Desktop\Embedded proj\Door_Lock_System\CONTROL_ECU\MCAL</state>
+                    <state>C:\Users\moham\Desktop\Embedded proj\Door_Lock_System\CONTROL_ECU\SERVICES</state>
+                    <state>C:\Users\moham\Desktop\Embedded proj\Door_Lock_System\CONTROL_ECU\UTILS</state>
                 </option>
                 <option>
                     <name>CCStdIncCheck</name>
@@ -659,7 +661,7 @@
             <data>
                 <extensions></extensions>
                 <cmdline></cmdline>
-                <hasPrio>1</hasPrio>
+                <hasPrio>128</hasPrio>
                 <buildSequence>inputOutputBased</buildSequence>
             </data>
         </settings>
@@ -2096,7 +2098,10 @@
     <group>
         <name>APP</name>
         <file>
-            <name>$PROJ_DIR$\main.c</name>
+            <name>$PROJ_DIR$\APP\main.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\APP\memorytest.c</name>
         </file>
     </group>
     <group>
@@ -2112,6 +2117,12 @@
         </file>
         <file>
             <name>$PROJ_DIR$\HAL\Button.h</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\HAL\Door_Lock.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\HAL\Door_Lock.h</name>
         </file>
         <file>
             <name>$PROJ_DIR$\HAL\Led.c</name>

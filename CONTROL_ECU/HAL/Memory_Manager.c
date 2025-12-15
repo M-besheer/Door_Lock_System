@@ -59,13 +59,13 @@ void Memory_SaveTimeout(uint32_t timeout)
     Eeprom_WriteBlock(TIMEOUT_START_ADDR, (u8*)&timeout, TIMEOUT_STORAGE_LEN);
 }
 
-void Memory_GetTimeout(char* buffer)
+void Memory_GetTimeout(uint32_t* timeout)
 {
     /* 1. Read the full 8-byte block */
-    Eeprom_ReadBlock(TIMEOUT_START_ADDR, (u8*)buffer, TIMEOUT_STORAGE_LEN);
+    Eeprom_ReadBlock(TIMEOUT_START_ADDR, (u8*)timeout, TIMEOUT_STORAGE_LEN);
 }
 
-void HardReset(void)
+void HardReset()
 {
     Memory_SavePassword(DEFAULT_PASSWORD);
     Memory_SaveTimeout(DEFAULT_TIMEOUT);
