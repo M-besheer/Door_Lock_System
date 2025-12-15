@@ -99,7 +99,7 @@
                 <option>
                     <name>GBECoreSlave</name>
                     <version>29</version>
-                    <state>38</state>
+                    <state>39</state>
                 </option>
                 <option>
                     <name>OGUseCmsis</name>
@@ -2103,6 +2103,9 @@
     <group>
         <name>CONFIG</name>
         <file>
+            <name>$PROJ_DIR$\CONFIG\LCD_Cfg.h</name>
+        </file>
+        <file>
             <name>$PROJ_DIR$\CONFIG\Led_Cfg.h</name>
         </file>
     </group>
@@ -2133,10 +2136,10 @@
             <name>$PROJ_DIR$\HAL\Led.h</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\HAL\POT.c</name>
+            <name>$PROJ_DIR$\HAL\potentiometer.c</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\HAL\POT.h</name>
+            <name>$PROJ_DIR$\HAL\potentiometer.h</name>
         </file>
     </group>
     <group>
@@ -2145,7 +2148,7 @@
             <name>$PROJ_DIR$\MCAL\ADC.c</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\MCAL\ADC.h</name>
+            <name>$PROJ_DIR$\MCAL\adc.h</name>
         </file>
         <file>
             <name>$PROJ_DIR$\MCAL\Dio.c</name>
