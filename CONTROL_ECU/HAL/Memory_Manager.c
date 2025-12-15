@@ -41,7 +41,7 @@ void Memory_GetPassword(char* buffer)
 
 bool Memory_CheckPassword(char* inputPassword)
 {
-    char storedPassword[10]; // Big enough for 8 bytes + null
+    char storedPassword[8]; // 
     
     Memory_GetPassword(storedPassword);
     
@@ -51,4 +51,22 @@ bool Memory_CheckPassword(char* inputPassword)
         return TRUE;
     }
     return FALSE;
+}
+
+void Memory_SaveTimeout(uint32_t timeout)
+{
+    /* Write the 4-byte timeout value directly */
+    Eeprom_WriteBlock(TIMEOUT_START_ADDR, (u8*)&timeout, TIMEOUT_STORAGE_LEN);
+}
+
+void Memory_GetTimeout(char* buffer)
+{
+    /* 1. Read the full 8-byte block */
+    Eeprom_ReadBlock(TIMEOUT_START_ADDR, (u8*)buffer, TIMEOUT_STORAGE_LEN);
+}
+
+void HardReset(void)
+{
+    Memory_SavePassword(DEFAULT_PASSWORD);
+    Memory_SaveTimeout(DEFAULT_TIMEOUT);
 }
