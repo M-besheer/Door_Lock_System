@@ -43,7 +43,7 @@ int counter = 0;
 /* ========================================================================== */
 
 void Control_SystemInit(void);
-void Control_CheckPassword(void);
+void Control_CheckPassword(char* password);
 void Control_SavePassword(char* password);
 void Control_OpenDoorSequence(void);
 void Control_ActivateAlarm(void);
@@ -79,7 +79,7 @@ int main(void) {
 
         switch(command) {
             case CMD_CHECK_PASS:
-                Control_CheckPassword();
+                Control_CheckPassword(Data);
                 break;
                 
             case CMD_SAVE_PASS:
@@ -125,15 +125,9 @@ void Control_SystemInit(void)
   Memory_Init();
 }
 
-void Control_CheckPassword(void)
+void Control_CheckPassword(char* password)
 {
-   uint8_t Entered_Password[PASSWORD_LEN + 1]; // +1 for null terminator in scanf
-   
-   printf("Enter 5-digit Password to Check: ");
-   scanf("%5s", Entered_Password); // Read string from console
-
-   /* Convert string to raw bytes if needed, but array matches structure */
-   bool Check = Memory_CheckPassword(Entered_Password);
+   bool Check = Memory_CheckPassword(password);
    
    if(Check == true) {
        counter = 0;
