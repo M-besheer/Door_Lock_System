@@ -10,6 +10,8 @@
 #include <stdbool.h>
 #include <stdio.h>      // Added for printf/scanf
 #include <string.h>
+#include <stdlib.h>    
+#include "../MCAL/uart.h"
 
 /* Drivers */
 #include "../HAL/Memory_Manager.h" 
@@ -18,18 +20,17 @@
 #include "../HAL/Buzzer.h"
 
 /* Definitions */
-#define CMD_CHECK_PASS     1  // Simplified for keyboard input
-#define CMD_SAVE_PASS      2
-#define CMD_OPEN_DOOR      3
-#define CMD_ALARM          4
-#define CMD_SET_TIMEOUT    5
-#define CMD_Check_First_Time 6
+#define CMD_CHECK_PASS     '1'  // Simplified for keyboard input
+#define CMD_SAVE_PASS      '2'
+#define CMD_OPEN_DOOR      '3'
+#define CMD_ALARM          '4'
+#define CMD_SET_TIMEOUT    '5'
+#define CMD_Check_First_Time '6'
 
 #define PASSWORD_LEN       5
-#define EEPROM_PASS_ADDR   0x00
-#define EEPROM_TIME_ADDR   0x10
 
-#define ALARM_DURATION_SEC  2
+
+#define ALARM_DURATION_SEC  5
 #define F_CPU               16000000UL 
 #define ALARM_CYCLES        (ALARM_DURATION_SEC * F_CPU)
 
@@ -43,10 +44,11 @@ int counter = 0;
 
 void Control_SystemInit(void);
 void Control_CheckPassword(void);
-void Control_SavePassword(void);
+void Control_SavePassword(char* password);
 void Control_OpenDoorSequence(void);
 void Control_ActivateAlarm(void);
-void Control_UpdateTimeout(void);
+void Control_UpdateTimeout(uint32_t timeout);
+
 
 /* ========================================================================== */
 /* MAIN FUNCTION                                                              */
@@ -58,9 +60,6 @@ int main(void) {
     /* 1. Initialization */
     Control_SystemInit();
     Memory_GetCheckFirstTime(&g_isfirstime);
-    printf("========================================\n");
-    printf("   Door Locker System - Logic Test      \n");
-    printf("========================================\n");
 
     /* Load saved timeout from EEPROM on boot */
     
@@ -70,25 +69,21 @@ int main(void) {
 
     /* 2. Main Loop */
     while(1) {
-        /* Terminal Menu */
-        printf("\n--- Main Menu ---\n");
-        printf("1. Check Password\n");
-        printf("2. Save New Password\n");
-        printf("3. Open Door\n");
-        printf("4. Test Alarm\n");
-        printf("5. Set Auto-Lock Timeout\n");
-        printf("Enter Command Number: ");
-        
-        scanf("%d", &input_command); // Wait for user input
-        printf("\n");
+        char command = UART0_ReceiveChar();
 
-        switch(input_command) {
+        char Data[6] = {};
+        for(int i=0; i<5; i++){
+            Data[i] = UART0_ReceiveChar();
+        }
+        Data[5] = '\0'; 
+
+        switch(command) {
             case CMD_CHECK_PASS:
                 Control_CheckPassword();
                 break;
                 
             case CMD_SAVE_PASS:
-                Control_SavePassword();
+                Control_SavePassword(Data);
                 break;
                 
             case CMD_OPEN_DOOR:
@@ -100,17 +95,18 @@ int main(void) {
                 break;
 
             case CMD_SET_TIMEOUT:
-                Control_UpdateTimeout();
+                Control_UpdateTimeout((uint32_t)atoi(Data));
                 break;
                 
             case CMD_Check_First_Time:
                 if(g_isfirstime == 1){
-                    printf("First Time Running the System. Setting Up Defaults...\n");
+                    UART0_SendChar('1');
                 } else {
-                    printf("System has been initialized before.\n");
+                    UART0_SendChar('0');
                 }
+                break;
             default:
-                printf("Invalid Command. Try 1-5.\n");
+                UART0_SendChar('9');
                 break;
         }
     }
@@ -123,7 +119,7 @@ int main(void) {
 void Control_SystemInit(void)
 {
   __asm("CPSIE I"); // Enable Interrupts
-  // UART Removed
+  UART0_Init();
   DoorLock_Init();
   Buzzer_Init();
   Memory_Init();
@@ -140,40 +136,34 @@ void Control_CheckPassword(void)
    bool Check = Memory_CheckPassword(Entered_Password);
    
    if(Check == true) {
-       printf("[Result] Password MATCH! (Access Granted)\n");
        counter = 0;
-       Control_OpenDoorSequence();
+       UART0_SendChar('1');
    } else {
-       printf("[Result] Password MISMATCH! (Access Denied)\n");
        if(counter<3){
        Buzzer_SmallBuzz();
        counter++;
-       printf("*Buzzer Beeped*\n");}
-       else{Control_ActivateAlarm();}
+        UART0_SendChar('0');
+       } 
+       else{
+        Control_ActivateAlarm();
+        UART0_SendChar('2');
+        }
    }
 }
 
-void Control_SavePassword(void)
-{
-    uint8_t New_Password[PASSWORD_LEN + 1];
-    
+void Control_SavePassword(char* password)
+{    
     if(g_isfirstime == 1){
         g_isfirstime = 0;
         Memory_SaveCheckFirstTime(g_isfirstime);
     }
 
-    printf("Enter NEW 5-digit Password to Save: ");
-    scanf("%5s", New_Password);
-    
-    Memory_SavePassword(New_Password);
-    printf("[Result] Password Saved to EEPROM.\n");
+    Memory_SavePassword(password);
 }
 
 void Control_OpenDoorSequence(void)
 {
-    printf("[Action] Unlocking Door...\n");
     DoorLock_Unlock();
-    printf("[Hardware] Solenoid ACTIVE (Unlocked)\n");
     
     /* Timer Setup */
     uint32_t delay_cycles = g_doorTimeout * 16000000;
@@ -189,14 +179,11 @@ void Control_OpenDoorSequence(void)
     NVIC_EN0_R = 1 << 19;             // NVIC Enable
     TIMER0_CTL_R |= 0x01;             // Enable Timer
     
-    printf("[Timer] Timer started for %d seconds. Waiting for ISR...\n", g_doorTimeout);
 }
 
 void Control_ActivateAlarm(void)
 {
-    printf("[Action] SECURITY ALERT! Activating Alarm...\n");
     Buzzer_Start();
-    printf("[Hardware] Buzzer ON\n");
 
     /* Timer 1 Setup */
     SYSCTL_RCGCTIMER_R |= 0x02;      
@@ -212,23 +199,17 @@ void Control_ActivateAlarm(void)
     NVIC_EN0_R = (1 << 21);
     TIMER1_CTL_R |= 0x00000001;
     
-    printf("[Timer] Alarm Timer started for 3 seconds...\n");
 }
 
-void Control_UpdateTimeout(void)
-{
-  uint32_t new_timeout;
-  printf("Enter New Timeout (5-30): ");
-  scanf("%u", &new_timeout);
-  
-  if(new_timeout < 5 || new_timeout > 30) {
-      printf("[Error] Invalid value. Must be 5-30.\n");
+void Control_UpdateTimeout(uint32_t timeout)
+{  
+  if(timeout < 5 || timeout > 30) {
+    UART0_SendChar('8');
       return;
   }
-  
-  g_doorTimeout = (uint8_t)new_timeout;
-  Memory_SaveTimeout(new_timeout);
-  printf("[Result] Timeout updated to %d seconds.\n", g_doorTimeout);
+
+  g_doorTimeout = (uint8_t)timeout;
+  Memory_SaveTimeout(timeout);
 }
 
 /* ========================================================================== */
@@ -242,11 +223,7 @@ void Timer0A_Handler_CloseDoor(void)
     DoorLock_Lock();
     
     /* Stop Timer */
-  //  TIMER0_CTL_R &= ~0x01;
-    
-    /* Visual Feedback for Terminal */
-    printf("\n[ISR] -> Timer0 Expired: Door Automatically LOCKED.\n");
-    printf("Enter Command Number: "); // Reprompt for menu clarity
+    TIMER0_CTL_R &= ~0x01;
 }
 
 void Timer1A_Handler_StopAlarm(void)
@@ -257,8 +234,4 @@ void Timer1A_Handler_StopAlarm(void)
     
     /* Stop Timer */
     TIMER1_CTL_R &= ~0x00000001;     
-    
-    /* Visual Feedback for Terminal */
-    printf("\n[ISR] -> Timer1 Expired: Alarm SILENCED.\n");
-    printf("Enter Command Number: "); // Reprompt for menu clarity
 }
