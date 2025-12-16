@@ -65,8 +65,21 @@ void Memory_GetTimeout(uint32_t* timeout)
     Eeprom_ReadBlock(TIMEOUT_START_ADDR, (u8*)timeout, TIMEOUT_STORAGE_LEN);
 }
 
+void Memory_SaveCheckFirstTime(uint32_t Check_First_Time)
+{
+    /* Write the 4-byte Check_First_Time value directly */
+    Eeprom_WriteBlock(Check_First_Time_Start_ADDR, (u8*)&Check_First_Time, Check_First_Time_LEN);
+}
+
+void Memory_GetTimeout(uint32_t* Check_First_Time)
+{
+    /* 1. Read the full 8-byte block */
+    Eeprom_ReadBlock(Check_First_Time_Start_ADDR, (u8*)Check_First_Time, Check_First_Time_LEN);
+}
+
 void HardReset()
 {
     Memory_SavePassword(DEFAULT_PASSWORD);
     Memory_SaveTimeout(DEFAULT_TIMEOUT);
+    Memory_SaveCheckFirstTime(DEFAULT_CHECK_FIRST_TIME);
 }
