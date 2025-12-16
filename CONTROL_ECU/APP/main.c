@@ -127,6 +127,30 @@ void Control_SystemInit(void)
   DoorLock_Init();
   Buzzer_Init();
   Memory_Init();
+  /* ======================================================= */
+  /* NEW: HARD RESET BUTTON CONFIGURATION (PF4)              */
+  /* ======================================================= */
+  SYSCTL_RCGCGPIO_R |= 0x20;             // 1. Enable Clock for Port F
+  while((SYSCTL_PRGPIO_R & 0x20) == 0);  // 2. Wait for Ready
+
+  GPIO_PORTF_LOCK_R = 0x4C4F434B;        // 3. Unlock Port F (Required for PF0, good practice)
+  GPIO_PORTF_CR_R |= 0x10;               // 4. Commit PF4
+  
+  GPIO_PORTF_DIR_R &= ~0x10;             // 5. PF4 is Input
+  GPIO_PORTF_PUR_R |= 0x10;              // 6. Enable Pull-Up Resistor
+  GPIO_PORTF_DEN_R |= 0x10;              // 7. Digital Enable
+
+  /* Interrupt Configuration */
+  GPIO_PORTF_IS_R &= ~0x10;              // Edge Sensitive
+  GPIO_PORTF_IBE_R &= ~0x10;             // Not both edges
+  GPIO_PORTF_IEV_R &= ~0x10;             // Falling Edge (Press)
+  GPIO_PORTF_ICR_R = 0x10;               // Clear any prior flags
+  GPIO_PORTF_IM_R |= 0x10;               // Unmask (Enable) Interrupt for PF4
+
+  /* NVIC Configuration (IRQ 30 for Port F) */
+  NVIC_EN0_R |= (1 << 30);               
+  
+  printf("[Init] Hard Reset Button (PF4) Enabled.\n");
 }
 
 void Control_CheckPassword(void)
@@ -261,4 +285,26 @@ void Timer1A_Handler_StopAlarm(void)
     /* Visual Feedback for Terminal */
     printf("\n[ISR] -> Timer1 Expired: Alarm SILENCED.\n");
     printf("Enter Command Number: "); // Reprompt for menu clarity
+}
+
+/* ========================================================================== */
+/* PORT F INTERRUPT HANDLER                                                   */
+/* ========================================================================== */
+void GPIOF_Handler(void)
+{
+    /* 1. Clear the Interrupt Flag immediately */
+    GPIO_PORTF_ICR_R = 0x10; 
+
+    /* 2. Visual Feedback */
+    printf("\n\n[Interrupt] !!! HARD RESET BUTTON PRESSED !!!\n");
+    
+    /* 3. Execute the Memory Reset Logic */
+    HardReset();
+
+    /* 4. Reset RAM Variables to match Memory */
+    g_doorTimeout = 5; 
+    g_isfirstime  = 1; 
+
+    printf("[System] Factory Defaults Restored. \n");
+    printf("Please Enter Command Number: "); 
 }
