@@ -23,6 +23,7 @@
 #define CMD_OPEN_DOOR      3
 #define CMD_ALARM          4
 #define CMD_SET_TIMEOUT    5
+#define CMD_Check_First_Time 6
 
 #define PASSWORD_LEN       5
 #define EEPROM_PASS_ADDR   0x00
@@ -33,6 +34,7 @@
 #define ALARM_CYCLES        (ALARM_DURATION_SEC * F_CPU)
 
 /* Global Variables */
+uint32_t g_isfirstime = 0;
 uint8_t g_doorTimeout = 5; 
 int counter = 0;
 /* ========================================================================== */
@@ -55,7 +57,7 @@ int main(void) {
     
     /* 1. Initialization */
     Control_SystemInit();
-    
+    Memory_GetCheckFirstTime(&g_isfirstime);
     printf("========================================\n");
     printf("   Door Locker System - Logic Test      \n");
     printf("========================================\n");
@@ -64,16 +66,7 @@ int main(void) {
     
     uint32_t temp_timeout; 
     Memory_GetTimeout(&temp_timeout); 
-
-    /* Validate and Update Global */
-    if(temp_timeout >= 5 && temp_timeout <= 30) {
-        g_doorTimeout = (uint8_t)temp_timeout;
-        printf("[Init] Loaded Timeout: %d seconds\n", g_doorTimeout);
-    } else {
-        HardReset();
-        g_doorTimeout = 5; 
-        printf("[Init] EEPROM Empty/Invalid. Using Default: 5s\n");
-    }
+    g_doorTimeout = (uint8_t)temp_timeout;
 
     /* 2. Main Loop */
     while(1) {
@@ -110,6 +103,12 @@ int main(void) {
                 Control_UpdateTimeout();
                 break;
                 
+            case CMD_Check_First_Time:
+                if(g_isfirstime == 1){
+                    printf("First Time Running the System. Setting Up Defaults...\n");
+                } else {
+                    printf("System has been initialized before.\n");
+                }
             default:
                 printf("Invalid Command. Try 1-5.\n");
                 break;
@@ -158,6 +157,11 @@ void Control_SavePassword(void)
 {
     uint8_t New_Password[PASSWORD_LEN + 1];
     
+    if(g_isfirstime == 1){
+        g_isfirstime = 0;
+        Memory_SaveCheckFirstTime(g_isfirstime);
+    }
+
     printf("Enter NEW 5-digit Password to Save: ");
     scanf("%5s", New_Password);
     

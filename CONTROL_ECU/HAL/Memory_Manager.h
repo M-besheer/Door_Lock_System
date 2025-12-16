@@ -32,6 +32,8 @@ void Memory_GetPassword(char* buffer);
 bool Memory_CheckPassword(char* inputPassword);
 void Memory_SaveTimeout(uint32_t timeout);
 void Memory_GetTimeout(uint32_t* timeout);
+void Memory_SaveCheckFirstTime(uint32_t Check_First_Time);
+void Memory_GetCheckFirstTime(uint32_t* Check_First_Time);
 void HardReset(void);
 
 #endif
