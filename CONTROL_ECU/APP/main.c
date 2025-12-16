@@ -251,12 +251,24 @@ void Timer1A_Handler_StopAlarm(void)
     Buzzer_Stop();
     
     /* Stop Timer */
-    TIMER1_CTL_R &= ~0x00000001;
-    /* Visual Feedback for Terminal */
-    printf("\n[ISR] -> Timer1 Expired: Alarm SILENCED.\n");
-    printf("Enter Command Number: "); // Reprompt for menu clarity
+    TIMER1_CTL_R &= ~0x00000001;     
 }
 
-/* ========================================================================== */
-/* PORT F INTERRUPT HANDLER                                                   */
-/* ========================================================================== */
+void GPIOF_Handler(void)
+{
+    /* 1. Clear the Interrupt Flag immediately */
+    GPIO_PORTF_ICR_R = 0x10; 
+
+    /* 2. Visual Feedback */
+    printf("\n\n[Interrupt] !!! HARD RESET BUTTON PRESSED !!!\n");
+    
+    /* 3. Execute the Memory Reset Logic */
+    HardReset();
+
+    /* 4. Reset RAM Variables to match Memory */
+    g_doorTimeout = 5; 
+    g_isfirstime  = 1; 
+
+    printf("[System] Factory Defaults Restored. \n");
+    printf("Please Enter Command Number: "); 
+}
