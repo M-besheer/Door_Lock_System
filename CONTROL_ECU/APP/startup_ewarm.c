@@ -43,7 +43,6 @@ void ResetISR(void);
 static void NmiSR(void);
 static void FaultISR(void);
 static void IntDefaultHandler(void);
-//extern void Timer0AIntHandler(void);
 
 //*****************************************************************************
 //
@@ -51,7 +50,6 @@ static void IntDefaultHandler(void);
 //
 //*****************************************************************************
 extern void __iar_program_start(void);
-extern void Timer0A_Handler(void); // <--- Add this
 
 //*****************************************************************************
 //
@@ -118,7 +116,8 @@ __root const uVectorEntry __vector_table[] @ ".intvec" =
     IntDefaultHandler,                      // ADC Sequence 2
     IntDefaultHandler,                      // ADC Sequence 3
     IntDefaultHandler,                      // Watchdog timer
-    Timer0A_Handler,                        // Timer 0 subtimer A  <-- CHANGE THIS  
+    IntDefaultHandler,                      // Timer 0 subtimer A
+    IntDefaultHandler,                      // Timer 0 subtimer B
     IntDefaultHandler,                      // Timer 1 subtimer A
     IntDefaultHandler,                      // Timer 1 subtimer B
     IntDefaultHandler,                      // Timer 2 subtimer A
