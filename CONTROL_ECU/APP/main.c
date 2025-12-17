@@ -8,7 +8,7 @@
 #include "tm4c123gh6pm.h"
 #include <stdint.h>
 #include <stdbool.h>
-#include <stdio.h>      // Added for printf/scanf
+//#include <stdio.h>      // Added for printf/scanf
 #include <string.h>
 #include <stdlib.h>    
 #include "../MCAL/uart.h"
@@ -18,6 +18,8 @@
 #include "../MCAL/SYSTICK.h"
 #include "../HAL/Door_Lock.h"
 #include "../HAL/Buzzer.h"
+#include "../HAL/Led.h"
+
 
 /* Definitions */
 #define CMD_CHECK_PASS     '1'  // Simplified for keyboard input
@@ -71,18 +73,25 @@ int main(void) {
     while(1) {
         char command = UART0_ReceiveChar();
 
-        char Data[6] = {};
-        for(int i=0; i<5; i++){
-            Data[i] = UART0_ReceiveChar();
-        }
-        Data[5] = '\0'; 
-
+        char Data[7] = {"00000"};
+        
+        
         switch(command) {
             case CMD_CHECK_PASS:
+                for(int i=0; i<5; i++){
+                  Data[i] = UART0_ReceiveChar();
+                }
+                Data[5] = '\0'; 
+
                 Control_CheckPassword(Data);
                 break;
                 
             case CMD_SAVE_PASS:
+                 for(int i=0; i<5; i++){
+                  Data[i] = UART0_ReceiveChar();
+                }
+                Data[5] = '\0'; 
+
                 Control_SavePassword(Data);
                 break;
                 
@@ -95,6 +104,11 @@ int main(void) {
                 break;
 
             case CMD_SET_TIMEOUT:
+                 for(int i=0; i<5; i++){
+                  Data[i] = UART0_ReceiveChar();
+                }
+                Data[5] = '\0'; 
+
                 Control_UpdateTimeout((uint32_t)atoi(Data));
                 break;
                 
@@ -123,6 +137,9 @@ void Control_SystemInit(void)
   DoorLock_Init();
   Buzzer_Init();
   Memory_Init();
+  Led_RedInit();
+  Led_BlueInit();
+  Led_GreenInit();
   /* ======================================================= */
   /* NEW: HARD RESET BUTTON CONFIGURATION (PF4)              */
   /* ======================================================= */
@@ -146,11 +163,14 @@ void Control_SystemInit(void)
   /* NVIC Configuration (IRQ 30 for Port F) */
   NVIC_EN0_R |= (1 << 30);               
   
-  printf("[Init] Hard Reset Button (PF4) Enabled.\n");
+  //printf("[Init] Hard Reset Button (PF4) Enabled.\n");
 }
 
 void Control_CheckPassword(char* password)
 {
+   Led_GreenTurnOn();
+   SysTick_Wait(500);
+   Led_GreenTurnOff();
    bool Check = Memory_CheckPassword(password);
    
    if(Check == true) {
@@ -163,14 +183,17 @@ void Control_CheckPassword(char* password)
         UART0_SendChar('0');
        } 
        else{
-        Control_ActivateAlarm();
         UART0_SendChar('2');
+        Control_ActivateAlarm();
         }
    }
 }
 
 void Control_SavePassword(char* password)
 {    
+    Led_GreenTurnOn();
+    SysTick_Wait(500);
+    Led_GreenTurnOff();
     if(g_isfirstime == 1){
         g_isfirstime = 0;
         Memory_SaveCheckFirstTime(g_isfirstime);
@@ -180,7 +203,10 @@ void Control_SavePassword(char* password)
 }
 
 void Control_OpenDoorSequence(void)
-{
+{   
+    Led_BlueTurnOn();
+    SysTick_Wait(500);
+    Led_BlueTurnOff();
     DoorLock_Unlock();
     
     /* Timer Setup */
@@ -200,7 +226,10 @@ void Control_OpenDoorSequence(void)
 }
 
 void Control_ActivateAlarm(void)
-{
+{   
+    Led_BlueTurnOn();
+    SysTick_Wait(500);
+    Led_BlueTurnOff();
     Buzzer_Start();
 
     /* Timer 1 Setup */
@@ -221,6 +250,9 @@ void Control_ActivateAlarm(void)
 
 void Control_UpdateTimeout(uint32_t timeout)
 {  
+    Led_BlueTurnOn();
+    SysTick_Wait(500);
+    Led_BlueTurnOff();
   if(timeout < 5 || timeout > 30) {
     UART0_SendChar('8');
       return;
@@ -260,15 +292,19 @@ void GPIOF_Handler(void)
     GPIO_PORTF_ICR_R = 0x10; 
 
     /* 2. Visual Feedback */
-    printf("\n\n[Interrupt] !!! HARD RESET BUTTON PRESSED !!!\n");
+    //printf("\n\n[Interrupt] !!! HARD RESET BUTTON PRESSED !!!\n");
     
+    Led_RedTurnOn();
+    SysTick_Wait(500);
+    Led_RedTurnOff();
     /* 3. Execute the Memory Reset Logic */
     HardReset();
+    
 
     /* 4. Reset RAM Variables to match Memory */
     g_doorTimeout = 5; 
     g_isfirstime  = 1; 
 
-    printf("[System] Factory Defaults Restored. \n");
-    printf("Please Enter Command Number: "); 
+   // printf("[System] Factory Defaults Restored. \n");
+    //printf("Please Enter Command Number: "); 
 }

@@ -1,117 +1,101 @@
-/******************************************************************************
+/**************************
  * File: uart.c
  * Module: UART (Universal Asynchronous Receiver/Transmitter)
- * Description: Source file for TM4C123GH6PM UART0 Driver (Register Level)
+ * Description: Source file for TM4C123GH6PM UART5 Driver (TivaWare)
  * Author: Ahmedhh
  * Date: December 10, 2025
- * 
- * Configuration:
- *   - UART0 (PA0: RX, PA1: TX)
- *   - Baud Rate: 115200
- *   - Data: 8 bits
- *   - Parity: None
- *   - Stop: 1 bit
- *   - System Clock: 16 MHz
- ******************************************************************************/
+ * * Configuration:
+ * - UART5 (PE4: RX, PE5: TX)
+ * - Baud Rate: 115200
+ * - Data: 8 bits
+ * - Parity: None
+ * - Stop: 1 bit
+ * - System Clock: 16 MHz
+ **************************/
 
 #include "uart.h"
-#include "tm4c123gh6pm.h"
+#include <stdint.h>
+#include <stdbool.h>
 
-/******************************************************************************
- *                              Definitions                                    *
- ******************************************************************************/
+/* TivaWare includes */
+#include "inc/hw_memmap.h"
+#include "inc/hw_types.h"
+#include "driverlib/sysctl.h"
+#include "driverlib/gpio.h"
+#include "driverlib/uart.h"
+#include "driverlib/pin_map.h"
+
+/**************************
+ * Definitions                                *
+ **************************/
 
 #define SYSTEM_CLOCK    16000000    /* 16 MHz system clock */
 #define BAUD_RATE       115200      /* Target baud rate */
 
-/******************************************************************************
- *                          Function Implementations                           *
- ******************************************************************************/
+/**************************
+ * Function Implementations                          *
+ **************************/
 
 /*
- * UART0_Init
- * Initializes UART0 with 115200 baud rate, 8N1 configuration.
- * 
- * Baud Rate Calculation:
- *   BRD = BRDI + BRDF = UARTSysClk / (16 * Baud Rate)
- *   BRD = 16,000,000 / (16 * 115200) = 8.680555
- *   BRDI = 8
- *   BRDF = 0.680555
- *   UARTFBRD[DIVFRAC] = integer(BRDF * 64 + 0.5) = integer(43.555 + 0.5) = 44
+ * UART5_Init
+ * Initializes UART5 with 115200 baud rate, 8N1 configuration using TivaWare.
  */
 void UART0_Init(void)
 {
-    volatile uint32_t delay;
+    /* 1. Enable peripheral clocks for UART5 and GPIOE */
+    /* CHANGED: UART0 -> UART5, GPIOA -> GPIOE */
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_UART5);
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOE);
     
-    /* 1. Enable clock for UART0 */
-    SYSCTL_RCGCUART_R |= 0x01;      /* Enable UART0 clock (bit 0) */
-    delay = SYSCTL_RCGCUART_R;      /* Wait for clock to stabilize */
+    /* Wait for peripherals to be ready */
+    while(!SysCtlPeripheralReady(SYSCTL_PERIPH_UART5));
+    while(!SysCtlPeripheralReady(SYSCTL_PERIPH_GPIOE));
     
-    /* 2. Enable clock for GPIOA */
-    SYSCTL_RCGCGPIO_R |= 0x01;      /* Enable PORTA clock (bit 0) */
-    delay = SYSCTL_RCGCGPIO_R;      /* Wait for clock to stabilize */
+    /* 2. Configure GPIO pins for UART functionality */
+    /* PE4: U5RX (UART5 Receive) */
+    /* PE5: U5TX (UART5 Transmit) */
+    /* CHANGED: PA0/PA1 -> PE4/PE5 mappings */
+    GPIOPinConfigure(GPIO_PE4_U5RX);
+    GPIOPinConfigure(GPIO_PE5_U5TX);
     
-    /* 3. Disable UART0 before configuration */
-    UART0_CTL_R &= ~UART_CTL_UARTEN;
+    /* Set pin type to UART */
+    /* CHANGED: PORTA -> PORTE, PIN_0/1 -> PIN_4/5 */
+    GPIOPinTypeUART(GPIO_PORTE_BASE, GPIO_PIN_4 | GPIO_PIN_5);
     
-    /* 4. Configure baud rate */
-    /* BRD = 16,000,000 / (16 * 115,200) = 8.680555 */
-    UART0_IBRD_R = 8;               /* Integer part of baud rate divisor */
-    UART0_FBRD_R = 44;              /* Fractional part: 0.680555 * 64 + 0.5 = 44 */
+    /* 3. Configure UART parameters */
+    /* CHANGED: UART0_BASE -> UART5_BASE */
+    UARTConfigSetExpClk(UART5_BASE, SYSTEM_CLOCK, BAUD_RATE,
+                        (UART_CONFIG_WLEN_8 | UART_CONFIG_STOP_ONE | 
+                         UART_CONFIG_PAR_NONE));
     
-    /* 5. Configure Line Control Register (LCRH) */
-    /* 8-bit data (WLEN = 11), no parity (PEN = 0), 1 stop bit (STP2 = 0), FIFOs enabled (FEN = 1) */
-    UART0_LCRH_R = (UART_LCRH_WLEN_8 | 0x10);  /* 8-bit, no parity, 1 stop, FIFOs enabled */
-    
-    /* 6. Configure UART0 Control Register */
-    /* Enable UART (UARTEN), transmit (TXE), and receive (RXE) */
-    UART0_CTL_R = (UART_CTL_UARTEN | UART_CTL_TXE | UART_CTL_RXE);
-    
-    /* 7. Configure GPIO pins PA0 (RX) and PA1 (TX) */
-    /* Enable alternate function */
-    GPIO_PORTA_AFSEL_R |= 0x03;     /* Enable alternate function on PA0, PA1 */
-    
-    /* Configure PCTL for UART function (PMCx = 1 for UART) */
-    GPIO_PORTA_PCTL_R = (GPIO_PORTA_PCTL_R & 0xFFFFFF00) | 0x00000011;
-    
-    /* Enable digital function */
-    GPIO_PORTA_DEN_R |= 0x03;       /* Enable digital on PA0, PA1 */
-    
-    /* Disable analog function */
-    GPIO_PORTA_AMSEL_R &= ~0x03;    /* Disable analog on PA0, PA1 */
+    /* 4. Enable UART5 */
+    /* CHANGED: UART0_BASE -> UART5_BASE */
+    UARTEnable(UART5_BASE);
 }
 
 /*
- * UART0_SendChar
- * Transmits a single character through UART0.
- * Blocks until the transmit FIFO is ready.
+ * UART5_SendChar
+ * Transmits a single character through UART5 using TivaWare.
  */
 void UART0_SendChar(char data)
 {
-    /* Wait until transmit FIFO is not full (TXFF = 0) */
-    while ((UART0_FR_R & UART_FR_TXFF) != 0);
-    
-    /* Write data to data register */
-    UART0_DR_R = data;
+    /* CHANGED: UART0_BASE -> UART5_BASE */
+    UARTCharPut(UART5_BASE, data);
 }
 
 /*
- * UART0_ReceiveChar
- * Receives a single character from UART0.
- * Blocks until a character is available in the receive FIFO.
+ * UART5_ReceiveChar
+ * Receives a single character from UART5 using TivaWare.
  */
 char UART0_ReceiveChar(void)
 {
-    /* Wait until receive FIFO is not empty (RXFE = 0) */
-    while ((UART0_FR_R & UART_FR_RXFE) != 0);
-    
-    /* Read and return data from data register */
-    return (char)(UART0_DR_R & 0xFF);
+    /* CHANGED: UART0_BASE -> UART5_BASE */
+    return (char)UARTCharGet(UART5_BASE);
 }
 
 /*
- * UART0_SendString
- * Transmits a null-terminated string through UART0.
+ * UART5_SendString
+ * Transmits a null-terminated string through UART5.
  */
 void UART0_SendString(const char *str)
 {
@@ -123,12 +107,11 @@ void UART0_SendString(const char *str)
 }
 
 /*
- * UART0_IsDataAvailable
- * Checks if data is available in the receive FIFO.
- * Returns 1 if data is available, 0 otherwise.
+ * UART5_IsDataAvailable
+ * Checks if data is available in the receive FIFO using TivaWare.
  */
 uint8_t UART0_IsDataAvailable(void)
 {
-    /* Check if receive FIFO is not empty */
-    return ((UART0_FR_R & UART_FR_RXFE) == 0) ? 1 : 0;
+    /* CHANGED: UART0_BASE -> UART5_BASE */
+    return (UARTCharsAvail(UART5_BASE)) ? 1 : 0;
 }
