@@ -68,4 +68,6 @@ void UART0_SendString(const char *str);
  */
 uint8_t UART0_IsDataAvailable(void);
 
+void UART0_Flush(void);
+
 #endif /* UART_H_ */

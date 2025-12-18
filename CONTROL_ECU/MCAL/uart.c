@@ -120,3 +120,19 @@ uint8_t UART0_IsDataAvailable(void)
     /* CHANGED: UART0_BASE -> UART5_BASE */
     return (UARTCharsAvail(UART5_BASE)) ? 1 : 0;
 }
+
+
+/*
+ * UART0_Flush
+ * Flushes the UART5 receive FIFO to discard garbage data.
+ * Useful for clearing noise spikes or old commands.
+ */
+void UART0_Flush(void)
+{
+    /* CHANGED: Checking UART5_BASE for available characters */
+    while (UARTCharsAvail(UART5_BASE))
+    {
+        /* Read and discard the character from UART5 Data Register */
+        UARTCharGetNonBlocking(UART5_BASE);
+    }
+}

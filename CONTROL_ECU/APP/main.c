@@ -81,7 +81,8 @@ int main(void) {
         UARTIntClear(UART5_BASE, status); // Clear the interrupt
 
         if (status & (UART_INT_RX | UART_INT_RT)) {
-            char command = UART0_ReceiveChar();
+            UART0_Flush();       // Clear any old noise
+        char command = UART0_ReceiveChar();
 
             char Data[7] = {"00000"};
         
@@ -131,7 +132,8 @@ int main(void) {
                     break;
                 default:
                     UART0_SendChar('9');
-                    break;
+                    UART0_Flush();
+                break;
             }
         }
         
@@ -182,22 +184,33 @@ void Control_SystemInit(void)
 
 void Control_CheckPassword(char* password)
 {
-   Led_GreenTurnOn();
-   SysTick_Wait(500);
-   Led_GreenTurnOff();
+   Led_BlueTurnOn();
+   SysTick_Wait(200);
+   Led_BlueTurnOff();
    bool Check = Memory_CheckPassword(password);
+   SysTick_Wait(200);
+
    
    if(Check) {
        counter = 0;
        UART0_SendChar('1');
+       Led_GreenTurnOn();
+       SysTick_Wait(500);
+       Led_GreenTurnOff();
    } else {
        if(counter<3){
        Buzzer_SmallBuzz();
        counter++;
         UART0_SendChar('0');
+        Led_RedTurnOn();
+        SysTick_Wait(500);
+        Led_RedTurnOff();
        } 
        else{
         UART0_SendChar('2');
+        Led_RedTurnOn();
+        SysTick_Wait(1000);
+        Led_RedTurnOff();
         Control_ActivateAlarm();
         }
    }
@@ -285,6 +298,10 @@ void Timer0A_Handler_CloseDoor(void)
     TIMER0_ICR_R = 0x01; // Clear Flag
     
     DoorLock_Lock();
+    
+    SysTick_Wait(500);
+
+    UART0_Flush(); // <--- ADD THIS HERE (Clears the solenoid noise spike)
     
     /* Stop Timer */
     TIMER0_CTL_R &= ~0x01;
