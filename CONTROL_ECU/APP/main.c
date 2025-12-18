@@ -12,6 +12,10 @@
 #include <string.h>
 #include <stdlib.h>    
 #include "../MCAL/uart.h"
+#include "inc/hw_memmap.h"
+#include "driverlib/uart.h"
+#include "inc/hw_ints.h"
+#include "driverlib/interrupt.h"
 
 /* Drivers */
 #include "../HAL/Memory_Manager.h" 
@@ -76,7 +80,15 @@ int main(void) {
         // Clock stops until a UART or GPIO interrupt occurs.
         __asm(" WFI ");
     }
-    void UART5_Handler(void) {
+    
+        
+    }
+
+/* ========================================================================== */
+/* FUNCTION IMPLEMENTATIONS                                                   */
+/* ========================================================================== */
+
+void UART5_Handler(void){
         uint32_t status = UARTIntStatus(UART5_BASE, true);
         UARTIntClear(UART5_BASE, status); // Clear the interrupt
 
@@ -136,12 +148,6 @@ int main(void) {
                 break;
             }
         }
-        
-    }
-}
-/* ========================================================================== */
-/* FUNCTION IMPLEMENTATIONS                                                   */
-/* ========================================================================== */
 
 void Control_SystemInit(void)
 {
