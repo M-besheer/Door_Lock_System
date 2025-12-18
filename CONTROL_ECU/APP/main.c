@@ -50,6 +50,7 @@ void Control_SavePassword(char* password);
 void Control_OpenDoorSequence(void);
 void Control_ActivateAlarm(void);
 void Control_UpdateTimeout(uint32_t timeout);
+void UART5_Handler(void);
 
 
 /* ========================================================================== */
@@ -70,62 +71,72 @@ int main(void) {
     g_doorTimeout = (uint8_t)temp_timeout;
 
     /* 2. Main Loop */
-    while(1) {
-        char command = UART0_ReceiveChar();
+    while(1){
+        // CPU enters sleep mode here. 
+        // Clock stops until a UART or GPIO interrupt occurs.
+        __asm(" WFI ");
+    }
+    void UART5_Handler(void) {
+        uint32_t status = UARTIntStatus(UART5_BASE, true);
+        UARTIntClear(UART5_BASE, status); // Clear the interrupt
 
-        char Data[7] = {"00000"};
+        if (status & (UART_INT_RX | UART_INT_RT)) {
+            char command = UART0_ReceiveChar();
+
+            char Data[7] = {"00000"};
         
         
-        switch(command) {
-            case CMD_CHECK_PASS:
-                for(int i=0; i<5; i++){
-                  Data[i] = UART0_ReceiveChar();
-                }
-                Data[5] = '\0'; 
+            switch(command) {
+                case CMD_CHECK_PASS:
+                    for(int i=0; i<5; i++){
+                    Data[i] = UART0_ReceiveChar();
+                    }
+                    Data[5] = '\0'; 
 
-                Control_CheckPassword(Data);
-                break;
+                    Control_CheckPassword(Data);
+                    break;
                 
-            case CMD_SAVE_PASS:
-                 for(int i=0; i<5; i++){
-                  Data[i] = UART0_ReceiveChar();
-                }
-                Data[5] = '\0'; 
+                case CMD_SAVE_PASS:
+                    for(int i=0; i<5; i++){
+                        Data[i] = UART0_ReceiveChar();
+                        }
+                    Data[5] = '\0'; 
 
-                Control_SavePassword(Data);
-                break;
+                    Control_SavePassword(Data);
+                    break;
                 
-            case CMD_OPEN_DOOR:
-                Control_OpenDoorSequence();
-                break;
+                case CMD_OPEN_DOOR:
+                    Control_OpenDoorSequence();
+                    break;
                 
-            case CMD_ALARM:
-                Control_ActivateAlarm();
-                break;
+                case CMD_ALARM:
+                    Control_ActivateAlarm();
+                    break;
 
-            case CMD_SET_TIMEOUT:
-                 for(int i=0; i<5; i++){
-                  Data[i] = UART0_ReceiveChar();
-                }
-                Data[5] = '\0'; 
+                case CMD_SET_TIMEOUT:
+                    for(int i=0; i<5; i++){
+                     Data[i] = UART0_ReceiveChar();
+                    }
+                    Data[5] = '\0'; 
 
-                Control_UpdateTimeout((uint32_t)strtoul(Data, NULL, 10));
-                break;
+                    Control_UpdateTimeout((uint32_t)strtoul(Data, NULL, 10));
+                    break;
                 
-            case CMD_Check_First_Time:
-                if(g_isfirstime == 1){
-                    UART0_SendChar('1');
-                } else {
-                    UART0_SendChar('0');
-                }
-                break;
-            default:
-                UART0_SendChar('9');
-                break;
+                case CMD_Check_First_Time:
+                    if(g_isfirstime == 1){
+                        UART0_SendChar('1');
+                    } else {
+                        UART0_SendChar('0');
+                    }
+                    break;
+                default:
+                    UART0_SendChar('9');
+                    break;
+            }
         }
+        
     }
 }
-
 /* ========================================================================== */
 /* FUNCTION IMPLEMENTATIONS                                                   */
 /* ========================================================================== */

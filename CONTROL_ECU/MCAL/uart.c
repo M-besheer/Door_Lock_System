@@ -70,6 +70,11 @@ void UART0_Init(void)
     
     /* 4. Enable UART5 */
     /* CHANGED: UART0_BASE -> UART5_BASE */
+
+    
+    // Enable the UART5 interrupt in the NVIC
+    IntEnable(INT_UART5);
+
     UARTEnable(UART5_BASE);
 }
 
