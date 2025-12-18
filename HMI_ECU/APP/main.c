@@ -91,7 +91,7 @@ int main()
 
                         do {
                             key_str = Keypad_GetKey();
-                        } while (key_str == 0);
+                        } while (key_str == NULL);
                         
                         if (strcmp(key_str, "*") == 0) {
                             options = (options + 1) % 3;
@@ -107,6 +107,9 @@ int main()
                                     break;
                                 case 2:
                                     Lcd_DisplayString("3: Set Timeout");
+                                    break;
+                                default: 
+                                    options = 0; 
                                     break;
                             } 
                         }
@@ -341,7 +344,7 @@ void GetPassword(char *password) {
             // Wait for a key press
             do {
                 key_str = Keypad_GetKey();
-            } while (key_str == 0);
+            } while (key_str == NULL);
 
             // Check for digit-only input
             if (!isdigit(key_str[0])) {
@@ -350,7 +353,8 @@ void GetPassword(char *password) {
             }
 
             // Append the digit to the password buffer
-            strcat(password, key_str);
+            password[i] = key_str[0];
+            password[i + 1] = '\0'; /* Ensure null termination */
 
             // Display masked character
             Lcd_GoToRowColumn(1, i);

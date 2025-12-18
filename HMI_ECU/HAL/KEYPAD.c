@@ -76,7 +76,11 @@ const char *Keypad_GetKey(void) {
         // Set current column LOW (active)
         Dio_WriteChannel(KEYPAD_COL_PORT, col_pins[col], LOW);
         // Small delay for signal to settle
-        for (volatile int d = 0; d < 100; d++);
+        for (volatile uint32_t d = 0U; d < 100U; d++) 
+        {
+            /* Wait for signal to settle */
+        }
+
         // Scan rows for key press
         for (uint8_t row = 0; row < 4; row++) {
             uint8_t pin_val = Dio_ReadChannel(KEYPAD_ROW_PORT, row_pins[row]);
