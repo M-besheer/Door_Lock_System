@@ -82,7 +82,7 @@ int main(void) {
 
         if (status & (UART_INT_RX | UART_INT_RT)) {
             UART0_Flush();       // Clear any old noise
-        char command = UART0_ReceiveChar();
+            char command = UART0_ReceiveChar();
 
             char Data[7] = {"00000"};
         
