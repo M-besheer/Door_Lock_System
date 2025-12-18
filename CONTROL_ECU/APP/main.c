@@ -168,22 +168,33 @@ void Control_SystemInit(void)
 
 void Control_CheckPassword(char* password)
 {
-   Led_GreenTurnOn();
-   SysTick_Wait(500);
-   Led_GreenTurnOff();
+   Led_BlueTurnOn();
+   SysTick_Wait(200);
+   Led_BlueTurnOff();
    bool Check = Memory_CheckPassword(password);
+   SysTick_Wait(200);
+
    
    if(Check == true) {
        counter = 0;
        UART0_SendChar('1');
+       Led_GreenTurnOn();
+       SysTick_Wait(500);
+       Led_GreenTurnOff();
    } else {
        if(counter<3){
        Buzzer_SmallBuzz();
        counter++;
         UART0_SendChar('0');
+        Led_RedTurnOn();
+        SysTick_Wait(500);
+        Led_RedTurnOff();
        } 
        else{
         UART0_SendChar('2');
+        Led_RedTurnOn();
+        SysTick_Wait(1000);
+        Led_RedTurnOff();
         Control_ActivateAlarm();
         }
    }

@@ -30,6 +30,9 @@ int CheckPassword(char *password, int *menu);
  */
 int main()
 {
+    Led_RedInit();
+    Led_BlueInit();
+    Led_GreenInit();
     SysTick_Init();
     Lcd_Init();
     POT_Init();
@@ -39,6 +42,7 @@ int main()
     
     while (1)
     {
+        
         char isSaved;
         // Use char arrays for C strings, initialized to null terminator {0}
         char password[6] = {0}; // For 5 chars + '\0'
@@ -72,7 +76,7 @@ int main()
             SysTick_Wait(2000);
             Lcd_Clear();
             Lcd_GoToRowColumn(0,0);
-            Lcd_DisplayString("A: Open Door");
+            Lcd_DisplayString("1: Open Door");
 
             int menu = 0;
             
@@ -149,7 +153,7 @@ int main()
                         menu = 0;
                         Lcd_Clear();
                         Lcd_GoToRowColumn(0,0);
-                        Lcd_DisplayString("A: Open Door");
+                        Lcd_DisplayString("1: Open Door");
 
                         break;
                     }
@@ -180,7 +184,7 @@ int main()
                         menu = 0;
                         Lcd_Clear();
                         Lcd_GoToRowColumn(0,0);
-                        Lcd_DisplayString("B: Change Password"); 
+                        Lcd_DisplayString("2: Change Password"); 
                         break;                            
                        }
                     // ... (Previous code remains the same)
@@ -233,9 +237,9 @@ int main()
                                     Lcd_GoToRowColumn(0,0);
                                     Lcd_DisplayString("Enter Password: ");
                                     if(CheckPassword(password, &menu)==1){
+                                      
                                     // The final 'time' value now holds the selected timeout
                                     // You would typically save this value to EEPROM or a global variable here.
-                                    sprintf(time_str, "%lu", time);
                                     SysTick_Wait(500);
 
                                     UART0_SendChar('5');
@@ -259,7 +263,7 @@ int main()
                         // If '#' wasn't pressed (e.g., another key or power cycle), still return to menu
                         menu = 0;
                         Lcd_GoToRowColumn(0,0);
-                        Lcd_DisplayString("C: Set Timeout");
+                        Lcd_DisplayString("3: Set Timeout");
 
                         break;
                     }
@@ -291,7 +295,10 @@ int CheckPassword(char *password, int *menu)
 
       UART0_SendChar('1');
       UART0_SendString(password);
-      correctPass = (int)UART0_ReceiveChar()-'0';      //printf("check pass: %d", correctPass);
+      correctPass = (int)UART0_ReceiveChar()-'0';  //printf("check pass: %d", correctPass);
+      Led_GreenTurnOn();
+      SysTick_Wait(500);
+      Led_GreenTurnOff();
       if (correctPass == 0){
         //printf("incorrect pass");
         Lcd_Clear();
