@@ -24,6 +24,8 @@
 #include "driverlib/gpio.h"
 #include "driverlib/uart.h"
 #include "driverlib/pin_map.h"
+#include "tm4c123gh6pm.h"
+#include "driverlib/interrupt.h"
 
 /**************************
  * Definitions                                *

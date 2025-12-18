@@ -14,7 +14,7 @@
 #include "../MCAL/uart.h"
 #include "inc/hw_memmap.h"
 #include "driverlib/uart.h"
-#include "inc/hw_ints.h"
+//#include "inc/hw_ints.h"
 #include "driverlib/interrupt.h"
 
 /* Drivers */
@@ -148,6 +148,7 @@ void UART5_Handler(void){
                 break;
             }
         }
+}
 
 void Control_SystemInit(void)
 {
