@@ -1,5 +1,4 @@
 #include "Dio.h"
-#include <stdio.h>  // For printf
 #include <stdint.h>   // Defines uint32_t, uint8_t
 #include <stdbool.h>  // Defines bool
 // TIVAWARE INCLUDES (Hidden from everyone else)
@@ -27,10 +26,6 @@ void Dio_Init(u8 PortId, u8 PinId, u8 Direction)
     // 1. Check for JTAG Pins (PC0 - PC3) -> CRITICAL: Bricks Debugger
     if(PortId == PORT_C && (PinId <= PIN_3))
     {
-        printf("\n[ERROR] CRITICAL: You tried to use PC%d!\n", PinId);
-        printf("[ERROR] PC0-PC3 are JTAG pins. Usage Forbidden.\n");
-        printf("[ERROR] System Halted to protect debugger access.\n");
-        
         // HALT SYSTEM (Infinite Loop) - Code stops here.
         while(1);
     }
@@ -39,11 +34,6 @@ void Dio_Init(u8 PortId, u8 PinId, u8 Direction)
     // (Optional: You might want to allow this later, but for now, block it)
     if(PortId == PORT_A && (PinId <= PIN_1))
     {
-        printf("\n[ERROR] WARNING: You tried to use PA%d!\n", PinId);
-        printf("[ERROR] PA0-PA1 are UART0 (Virtual Serial Port).\n");
-        printf("[ERROR] Overwriting them kills printf/debugging capability.\n");
-        printf("[ERROR] System Halted.\n");
-        
         while(1);
     }
     

@@ -11,17 +11,15 @@ void Button_Init(void)
 
 u8 Button_Read(void)
 {
-    // Read the physical pin
+    u8 returnValue = FALSE;
     u8 Val = Dio_ReadChannel(BUTTON_PORT, BUTTON_PIN);
-    
-    // Logic: The switch is Active LOW (0 when pressed).
-    // Let's invert it so the App sees "1" when pressed (easier to think about).
     if (Val == LOW) 
     {
-        return TRUE;  // Pressed
+        returnValue = TRUE;  // Pressed
     }
     else 
     {
-        return FALSE; // Released
+        returnValue = FALSE; // Released
     }
+    return returnValue;
 }

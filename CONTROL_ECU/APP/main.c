@@ -109,7 +109,7 @@ int main(void) {
                 }
                 Data[5] = '\0'; 
 
-                Control_UpdateTimeout((uint32_t)atoi(Data));
+                Control_UpdateTimeout((uint32_t)strtoul(Data, NULL, 10));
                 break;
                 
             case CMD_Check_First_Time:
@@ -144,7 +144,10 @@ void Control_SystemInit(void)
   /* NEW: HARD RESET BUTTON CONFIGURATION (PF4)              */
   /* ======================================================= */
   SYSCTL_RCGCGPIO_R |= 0x20;             // 1. Enable Clock for Port F
-  while((SYSCTL_PRGPIO_R & 0x20) == 0);  // 2. Wait for Ready
+  while((SYSCTL_PRGPIO_R & 0x20) == 0)  // 2. Wait for Ready
+  {
+    /* Wait for Peripheral Ready */
+  } 
 
   GPIO_PORTF_LOCK_R = 0x4C4F434B;        // 3. Unlock Port F (Required for PF0, good practice)
   GPIO_PORTF_CR_R |= 0x10;               // 4. Commit PF4
@@ -173,7 +176,7 @@ void Control_CheckPassword(char* password)
    Led_GreenTurnOff();
    bool Check = Memory_CheckPassword(password);
    
-   if(Check == true) {
+   if(Check) {
        counter = 0;
        UART0_SendChar('1');
    } else {
