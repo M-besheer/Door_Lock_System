@@ -46,6 +46,7 @@ int main()
         char isSaved;
         // Use char arrays for C strings, initialized to null terminator {0}
         char password[6] = {0}; // For 5 chars + '\0'
+        UART0_Flush(); // <--- ADD THIS HERE
         UART0_SendChar('6'); //////////////////////////////////////////////////////check if pass exists
         SysTick_Wait(500);
         isSaved = UART0_ReceiveChar(); /////////////////////////////////////returns bool 0: not set, 1:Set
@@ -144,12 +145,13 @@ int main()
                                UART0_SendChar('3');
                                Lcd_Clear();
                                Lcd_GoToRowColumn(0,0);
-                               Lcd_DisplayString("Welcome");
+                               Lcd_DisplayString("Welcome Home!");
                         }
-
-                            
                         
-                        SysTick_Wait(1000); //////////////////////Should stay on welcome until door closes?????
+                        SysTick_Wait(6000); //////////////////////Should stay on welcome until door closes?????
+                        
+                        UART0_Flush(); // <--- ADD THIS HERE (Clears the solenoid noise spike)
+                        
                         menu = 0;
                         Lcd_Clear();
                         Lcd_GoToRowColumn(0,0);
@@ -292,7 +294,7 @@ int CheckPassword(char *password, int *menu)
     // The loop runs for one less than the buffer size (e.g., 5 characters for a size 6 buffer)
       GetPassword(password);
       SysTick_Wait(500);
-
+      UART0_Flush();
       UART0_SendChar('1');
       UART0_SendString(password);
       correctPass = (int)UART0_ReceiveChar()-'0';  //printf("check pass: %d", correctPass);
@@ -319,8 +321,6 @@ int CheckPassword(char *password, int *menu)
         menu=0;
         return 2;
       }
-     
-      
     } 
       return correctPass; //////////////return 1
 }

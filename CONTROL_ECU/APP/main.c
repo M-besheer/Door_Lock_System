@@ -71,6 +71,7 @@ int main(void) {
 
     /* 2. Main Loop */
     while(1) {
+        UART0_Flush();       // Clear any old noise
         char command = UART0_ReceiveChar();
 
         char Data[7] = {"00000"};
@@ -121,6 +122,7 @@ int main(void) {
                 break;
             default:
                 UART0_SendChar('9');
+                UART0_Flush();
                 break;
         }
     }
@@ -282,6 +284,10 @@ void Timer0A_Handler_CloseDoor(void)
     TIMER0_ICR_R = 0x01; // Clear Flag
     
     DoorLock_Lock();
+    
+    SysTick_Wait(500);
+
+    UART0_Flush(); // <--- ADD THIS HERE (Clears the solenoid noise spike)
     
     /* Stop Timer */
     TIMER0_CTL_R &= ~0x01;
