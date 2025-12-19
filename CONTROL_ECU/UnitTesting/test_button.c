@@ -4,7 +4,7 @@
 #include "SYSTICK.h"
 
 TestResult test_button_init(void) {
-    test_print("Testing Button Initialization...\n");
+    printf("Testing Button Initialization...\n");
     
     Button_Init();
     TEST_ASSERT(1, "Button_Init() completed");
@@ -13,16 +13,16 @@ TestResult test_button_init(void) {
 }
 
 TestResult test_button_read_logic(void) {
-    test_print("Testing Button Read Logic (Active LOW)...\n");
-    test_print("  Press and release the button when prompted\n");
+    printf("Testing Button Read Logic (Active LOW)...\n");
+    printf("  Press and release the button when prompted\n");
     
     // Initial read (should be FALSE/released)
     u8 initial_state = Button_Read();
-    test_print("  Initial state (released): %s\n", 
+    printf("  Initial state (released): %s\n", 
                initial_state == FALSE ? "FALSE" : "TRUE");
     
     // Wait for button press
-    test_print("  Please PRESS the button now...\n");
+    printf("  Please PRESS the button now...\n");
     
     uint32_t timeout = 10000; // 10 seconds
     uint32_t start_time = SysTick_GetTick();
@@ -37,14 +37,14 @@ TestResult test_button_read_logic(void) {
     }
     
     if (pressed_state == TRUE) {
-        test_print("  Button PRESSED detected: TRUE\n");
+        printf("  Button PRESSED detected: TRUE\n");
         
         // Wait for release
-        test_print("  Please RELEASE the button...\n");
+        printf("  Please RELEASE the button...\n");
         while (Button_Read() == TRUE) {
             test_delay_ms(100);
         }
-        test_print("  Button RELEASED detected: FALSE\n");
+        printf("  Button RELEASED detected: FALSE\n");
         
         TEST_ASSERT(1, "Button press/release cycle completed");
     } else {
@@ -55,7 +55,7 @@ TestResult test_button_read_logic(void) {
 }
 
 TestResult test_button_debounce(void) {
-    test_print("Testing Button Debounce (rapid reads)...\n");
+    printf("Testing Button Debounce (rapid reads)...\n");
     
     uint32_t samples = 100;
     uint32_t transitions = 0;
@@ -70,7 +70,7 @@ TestResult test_button_debounce(void) {
         test_delay_ms(10); // Read every 10ms
     }
     
-    test_print("  Samples: %lu, Transitions: %lu\n", samples, transitions);
+    printf("  Samples: %lu, Transitions: %lu\n", samples, transitions);
     TEST_CHECK(transitions < 10, "Debouncing working (few transitions)");
     
     return TEST_PASS;
@@ -84,9 +84,9 @@ TestCase button_tests[] = {
 };
 
 void run_button_tests(void) {
-    test_print("\n-------------------------------\n");
-    test_print("       BUTTON DRIVER TESTS\n");
-    test_print("-------------------------------\n");
+    printf("\n-------------------------------\n");
+    printf("       BUTTON DRIVER TESTS\n");
+    printf("-------------------------------\n");
     
     test_init();
     test_run_suite(button_tests, sizeof(button_tests)/sizeof(button_tests[0]));

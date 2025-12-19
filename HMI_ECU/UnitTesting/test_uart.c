@@ -4,7 +4,7 @@
 #include "SYSTICK.h"
 
 TestResult test_uart_init(void) {
-    test_print("Testing UART Initialization...\n");
+    printf("Testing UART Initialization...\n");
     
     // Note: UART0_Init() is already called in test_init()
     // But we'll verify it works
@@ -14,8 +14,8 @@ TestResult test_uart_init(void) {
 }
 
 TestResult test_uart_echo(void) {
-    test_print("Testing UART Echo (connect PE4 and PE5 for loopback)...\n");
-    test_print("  If loopback not connected, this test will timeout.\n");
+    printf("Testing UART Echo (connect PE4 and PE5 for loopback)...\n");
+    printf("  If loopback not connected, this test will timeout.\n");
     
     // Send test pattern
     const char* test_string = "ECHO_TEST\n";
@@ -26,16 +26,23 @@ TestResult test_uart_echo(void) {
     char received[32];
     int i = 0;
     
-    while (SysTick_Wait(1000)) {
+    uint32_t timeout = 10000; // 10 seconds
+    uint32_t elapsed_time = 0;
+    
+  
+    while (elapsed_time < timeout) {
         if (UART0_IsDataAvailable()) {
             received[i++] = UART0_ReceiveChar();
             if (received[i-1] == '\n') break;
         }
+        // Wait 100ms and increment counter
+        SysTick_Wait(100);
+        elapsed_time += 100;
     }
     received[i] = '\0';
     
     if (i > 0) {
-        test_print("  Received: %s", received);
+        printf("  Received: %s", received);
         TEST_CHECK(strcmp(test_string, received) == 0, "UART echo");
     } else {
         TEST_SKIP("No loopback connection - skipping echo test");
@@ -45,7 +52,7 @@ TestResult test_uart_echo(void) {
 }
 
 TestResult test_uart_throughput(void) {
-    test_print("Testing UART Throughput...\n");
+    printf("Testing UART Throughput...\n");
     
     // Send multiple strings
     for (int i = 0; i < 5; i++) {
@@ -68,9 +75,9 @@ TestCase uart_tests[] = {
 };
 
 void run_uart_tests(void) {
-    test_print("\n-------------------------------\n");
-    test_print("        UART TESTS\n");
-    test_print("-------------------------------\n");
+    printf("\n-------------------------------\n");
+    printf("        UART TESTS\n");
+    printf("-------------------------------\n");
     
     test_init();
     test_run_suite(uart_tests, sizeof(uart_tests)/sizeof(uart_tests[0]));

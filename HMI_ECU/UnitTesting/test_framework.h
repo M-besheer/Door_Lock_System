@@ -44,10 +44,10 @@ void test_print_dec(uint32_t value);
         g_test_stats.total++; \
         if (condition) { \
             g_test_stats.passed++; \
-            test_print("[PASS] " message "\n", ##__VA_ARGS__); \
+            printf("[PASS] " message "\n", ##__VA_ARGS__); \
         } else { \
             g_test_stats.failed++; \
-            test_print("[FAIL] " message " (File: %s, Line: %d)\n", \
+            printf("[FAIL] " message " (File: %s, Line: %d)\n", \
                       ##__VA_ARGS__, __FILE__, __LINE__); \
             return TEST_FAIL; \
         } \
@@ -58,17 +58,17 @@ void test_print_dec(uint32_t value);
         g_test_stats.total++; \
         if (condition) { \
             g_test_stats.passed++; \
-            test_print("[PASS] " message "\n", ##__VA_ARGS__); \
+            printf("[PASS] " message "\n", ##__VA_ARGS__); \
         } else { \
             g_test_stats.failed++; \
-            test_print("[FAIL] " message "\n", ##__VA_ARGS__); \
+            printf("[FAIL] " message "\n", ##__VA_ARGS__); \
         } \
     } while(0)
 
 #define TEST_SKIP(message, ...) \
     do { \
         g_test_stats.skipped++; \
-        test_print("[SKIP] " message "\n", ##__VA_ARGS__); \
+        printf("[SKIP] " message "\n", ##__VA_ARGS__); \
         return TEST_SKIP; \
     } while(0)
 

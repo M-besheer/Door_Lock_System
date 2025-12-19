@@ -4,7 +4,7 @@
 #include "SYSTICK.h"
 
 TestResult test_dio_init_output(void) {
-    test_print("Testing DIO Output Initialization...\n");
+    printf("Testing DIO Output Initialization...\n");
     
     // Test each port for output
     for (u8 port = PORT_A; port <= PORT_F; port++) {
@@ -31,7 +31,7 @@ TestResult test_dio_init_output(void) {
 }
 
 TestResult test_dio_init_input(void) {
-    test_print("Testing DIO Input Initialization...\n");
+    printf("Testing DIO Input Initialization...\n");
     
     // Test with pull-up resistors
     for (u8 port = PORT_B; port <= PORT_F; port++) {
@@ -55,7 +55,7 @@ TestResult test_dio_init_input(void) {
 }
 
 TestResult test_dio_port_f_special(void) {
-    test_print("Testing PORT_F Special Pins (PF0, PF4)...\n");
+    printf("Testing PORT_F Special Pins (PF0, PF4)...\n");
     
     // PF0 is special (unlock required)
     Dio_Init(PORT_F, PIN_0, INPUT);
@@ -72,7 +72,7 @@ TestResult test_dio_port_f_special(void) {
 }
 
 TestResult test_dio_read_write(void) {
-    test_print("Testing DIO Read/Write consistency...\n");
+    printf("Testing DIO Read/Write consistency...\n");
     
     // Use PORT_B for testing (safe port)
     u8 test_port = PORT_B;
@@ -103,9 +103,9 @@ TestCase dio_tests[] = {
 };
 
 void run_dio_tests(void) {
-    test_print("\n-------------------------------\n");
-    test_print("        DIO DRIVER TESTS\n");
-    test_print("-------------------------------\n");
+    printf("\n-------------------------------\n");
+    printf("        DIO DRIVER TESTS\n");
+    printf("-------------------------------\n");
     
     test_init();
     test_run_suite(dio_tests, sizeof(dio_tests)/sizeof(dio_tests[0]));

@@ -56,7 +56,7 @@ void Control_UpdateTimeout(uint32_t timeout);
 /* MAIN FUNCTION                                                              */
 /* ========================================================================== */
 
-int main(void) {
+int main2(void) {
     int input_command;
     
     /* 1. Initialization */

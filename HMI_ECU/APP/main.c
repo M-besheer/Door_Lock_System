@@ -28,7 +28,7 @@ int CheckPassword(char *password, int *menu);
 /*
  * Main function
  */
-int main()
+int main2()
 {
     SysTick_Init();
     Lcd_Init();

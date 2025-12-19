@@ -3,19 +3,20 @@
 #include "keypad.h"
 #include "SYSTICK.h"
 #include <string.h>
+#include "std_types.h"
 
 TestResult test_keypad_init(void) {
-    test_print("Testing Keypad Initialization...\n");
+    printf("Testing Keypad Initialization...\n");
     
     Keypad_Init();
     TEST_ASSERT(1, "Keypad_Init() completed");
     
     // Check for phantom key presses
-    test_print("  Checking for phantom key presses...\n");
+    printf("  Checking for phantom key presses...\n");
     for (int i = 0; i < 10; i++) {
         const char* key = Keypad_GetKey();
         if (key != 0) {
-            test_print("  WARNING: Phantom key detected: %s\n", key);
+            printf("  WARNING: Phantom key detected: %s\n", key);
         }
         test_delay_ms(10);
     }
@@ -24,8 +25,8 @@ TestResult test_keypad_init(void) {
 }
 
 TestResult test_keypad_single_keys(void) {
-    test_print("Testing Keypad - Single Key Detection\n");
-    test_print("  Press each key when prompted (10s timeout per key)\n\n");
+    printf("Testing Keypad - Single Key Detection\n");
+    printf("  Press each key when prompted (10s timeout per key)\n\n");
     
     const char* expected[4][4] = {
         {"1", "2", "3", "A"},
@@ -38,28 +39,34 @@ TestResult test_keypad_single_keys(void) {
     
     for (int row = 0; row < 4; row++) {
         for (int col = 0; col < 4; col++) {
-            test_print("  Please press key '%s'... ", expected[row][col]);
+            printf("  Please press key '%s'... ", expected[row][col]);
             
             const char* pressed_key = 0;
             
-            while (SysTick_Wait(10000)) {
+            uint32_t timeout = 10000; // 10 seconds
+            uint32_t elapsed_time = 0;
+            
+            while (elapsed_time < timeout) {
                 pressed_key = Keypad_GetKey();
                 if (pressed_key != 0) {
                     break;
                 }
-                test_delay_ms(50);
+                
+                // Wait 100ms and increment counter
+                SysTick_Wait(100);
+                elapsed_time += 100;
             }
             
             if (pressed_key == 0) {
-                test_print("TIMEOUT\n");
+                printf("TIMEOUT\n");
                 continue;
             }
             
             if (strcmp(pressed_key, expected[row][col]) == 0) {
-                test_print("OK\n");
+                printf("OK\n");
                 pressed_count++;
             } else {
-                test_print("WRONG (got '%s')\n", pressed_key);
+                printf("WRONG (got '%s')\n", pressed_key);
             }
             
             // Wait for key release
@@ -70,40 +77,46 @@ TestResult test_keypad_single_keys(void) {
         }
     }
     
-    test_print("\n  Keys pressed correctly: %d/16\n", pressed_count);
+    printf("\n  Keys pressed correctly: %d/16\n", pressed_count);
     TEST_CHECK(pressed_count >= 12, "Most keys working");
     
     return TEST_PASS;
 }
 
 TestResult test_keypad_menu_keys(void) {
-    test_print("Testing Keypad Menu Keys (+, -, *)...\n");
+    printf("Testing Keypad Menu Keys (+, -, *)...\n");
     
-    test_print("  Press '+' then '-' then '*'...\n");
+    printf("  Press '+' then '-' then '*'...\n");
     
     const char* menu_keys[] = {"+", "-", "*", "#"};
     int correct = 0;
     
     for (int i = 0; i < 4; i++) {
-        test_print("  Waiting for '%s'... ", menu_keys[i]);
+        printf("  Waiting for '%s'... ", menu_keys[i]);
         
         const char* key = 0;
         
-        while (SysTick_Wait(5000)) {
-            key = Keypad_GetKey();
-            if (key != 0) {
-                break;
-            }
-            test_delay_ms(50);
-        }
+       uint32_t timeout = 10000; // 10 seconds
+       uint32_t elapsed_time = 0;
+      
+       while (elapsed_time < timeout) {
+          key = Keypad_GetKey();
+          if (key != 0) {
+              break;
+          }
+          // Wait 100ms and increment counter
+          SysTick_Wait(100);
+          elapsed_time += 100;
+      }
+      
         
         if (key && strcmp(key, menu_keys[i]) == 0) {
-            test_print("OK\n");
+            printf("OK\n");
             correct++;
         } else if (key) {
-            test_print("Wrong (got '%s')\n", key);
+            printf("Wrong (got '%s')\n", key);
         } else {
-            test_print("Timeout\n");
+            printf("Timeout\n");
         }
         
         while (Keypad_GetKey() != 0) {
@@ -125,9 +138,9 @@ TestCase keypad_tests[] = {
 };
 
 void run_keypad_tests(void) {
-    test_print("\n-------------------------------\n");
-    test_print("       KEYPAD DRIVER TESTS\n");
-    test_print("-------------------------------\n");
+    printf("\n-------------------------------\n");
+    printf("       KEYPAD DRIVER TESTS\n");
+    printf("-------------------------------\n");
     
     test_init();
     test_run_suite(keypad_tests, sizeof(keypad_tests)/sizeof(keypad_tests[0]));

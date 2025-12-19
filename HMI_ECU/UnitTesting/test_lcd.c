@@ -6,7 +6,7 @@
 #include "std_types.h"
 
 TestResult test_lcd_init(void) {
-    test_print("Testing LCD Initialization...\n");
+    printf("Testing LCD Initialization...\n");
     
     Lcd_Init();
     test_delay_ms(100); // Give LCD time to initialize
@@ -17,7 +17,7 @@ TestResult test_lcd_init(void) {
 }
 
 TestResult test_lcd_clear(void) {
-    test_print("Testing LCD Clear...\n");
+    printf("Testing LCD Clear...\n");
     
     Lcd_DisplayString("Test String");
     test_delay_ms(500);
@@ -32,7 +32,7 @@ TestResult test_lcd_clear(void) {
 }
 
 TestResult test_lcd_string_display(void) {
-    test_print("Testing LCD String Display...\n");
+    printf("Testing LCD String Display...\n");
     
     const char* test_strings[] = {
         "Hello World!",
@@ -43,8 +43,8 @@ TestResult test_lcd_string_display(void) {
     
     for (int i = 0; i < 4; i++) {
         Lcd_Clear();
-        Lcd_DisplayString(test_strings[i]);
-        test_print("  Displayed: '%s'\n", test_strings[i]);
+        Lcd_DisplayString((char *)test_strings[i]);
+        printf("  Displayed: '%s'\n", test_strings[i]);
         test_delay_ms(500);
     }
     
@@ -54,7 +54,7 @@ TestResult test_lcd_string_display(void) {
 }
 
 TestResult test_lcd_cursor_position(void) {
-    test_print("Testing LCD Cursor Positioning...\n");
+    printf("Testing LCD Cursor Positioning...\n");
     
     // Test all positions on 16x2 display
     for (u8 row = 0; row < 2; row++) {
@@ -83,7 +83,7 @@ TestResult test_lcd_cursor_position(void) {
 }
 
 TestResult test_lcd_special_chars(void) {
-    test_print("Testing LCD Special Characters...\n");
+    printf("Testing LCD Special Characters...\n");
     
     Lcd_Clear();
     Lcd_DisplayString("Special: ");
@@ -110,9 +110,9 @@ TestCase lcd_tests[] = {
 };
 
 void run_lcd_tests(void) {
-    test_print("\n-------------------------------\n");
-    test_print("        LCD DRIVER TESTS\n");
-    test_print("-------------------------------\n");
+    printf("\n-------------------------------\n");
+    printf("        LCD DRIVER TESTS\n");
+    printf("-------------------------------\n");
     
     test_init();
     test_run_suite(lcd_tests, sizeof(lcd_tests)/sizeof(lcd_tests[0]));

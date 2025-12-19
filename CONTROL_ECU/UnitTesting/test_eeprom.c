@@ -5,7 +5,7 @@
 #include <string.h>
 
 TestResult test_eeprom_init(void) {
-    test_print("Testing EEPROM Initialization...\n");
+    printf("Testing EEPROM Initialization...\n");
     
     bool init_result = Eeprom_Init();
     TEST_ASSERT(init_result == TRUE, "EEPROM Initialization");
@@ -14,7 +14,7 @@ TestResult test_eeprom_init(void) {
 }
 
 TestResult test_eeprom_byte_rw(void) {
-    test_print("Testing EEPROM Byte Read/Write...\n");
+    printf("Testing EEPROM Byte Read/Write...\n");
     
     u32 test_address = 0x100;
     u8 write_data = 0x5A;
@@ -27,7 +27,7 @@ TestResult test_eeprom_byte_rw(void) {
     // Read byte
     read_data = Eeprom_ReadByte(test_address);
     
-    test_print("  Wrote: 0x%02X, Read: 0x%02X\n", write_data, read_data);
+    printf("  Wrote: 0x%02X, Read: 0x%02X\n", write_data, read_data);
     TEST_ASSERT(read_data == write_data, "Byte R/W match");
     
     // Test different value
@@ -42,7 +42,7 @@ TestResult test_eeprom_byte_rw(void) {
 }
 
 TestResult test_eeprom_block_rw(void) {
-    test_print("Testing EEPROM Block Read/Write...\n");
+    printf("Testing EEPROM Block Read/Write...\n");
     
     u32 base_address = 0x200;
     u8 write_buffer[32];
@@ -64,20 +64,20 @@ TestResult test_eeprom_block_rw(void) {
     bool match = true;
     for (int i = 0; i < 32; i++) {
         if (write_buffer[i] != read_buffer[i]) {
-            test_print("  Mismatch at offset %d\n", i);
+            printf("  Mismatch at offset %d\n", i);
             match = false;
             break;
         }
     }
     
     TEST_ASSERT(match, "Block R/W match");
-    test_print("  32-byte block verified\n");
+    printf("  32-byte block verified\n");
     
     return TEST_PASS;
 }
 
 TestResult test_eeprom_password_storage(void) {
-    test_print("Testing EEPROM Password Storage...\n");
+    printf("Testing EEPROM Password Storage...\n");
     
     // Simulate password storage
     u32 pass_address = 0x300;
@@ -91,7 +91,7 @@ TestResult test_eeprom_password_storage(void) {
     // Read password
     Eeprom_ReadBlock(pass_address, (u8*)read_pass, 6);
     
-    test_print("  Stored: '%s', Read: '%s'\n", password, read_pass);
+    printf("  Stored: '%s', Read: '%s'\n", password, read_pass);
     TEST_ASSERT(strcmp(password, read_pass) == 0, "Password storage");
     
     return TEST_PASS;
@@ -106,9 +106,9 @@ TestCase eeprom_tests[] = {
 };
 
 void run_eeprom_tests(void) {
-    test_print("\n-------------------------------\n");
-    test_print("        EEPROM TESTS\n");
-    test_print("-------------------------------\n");
+    printf("\n-------------------------------\n");
+    printf("        EEPROM TESTS\n");
+    printf("-------------------------------\n");
     
     test_init();
     test_run_suite(eeprom_tests, sizeof(eeprom_tests)/sizeof(eeprom_tests[0]));

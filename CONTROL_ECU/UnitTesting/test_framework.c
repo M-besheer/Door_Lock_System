@@ -39,41 +39,41 @@ void test_init(void) {
     UART0_Init();  // Your UART5 driver (named UART0)
     memset(&g_test_stats, 0, sizeof(g_test_stats));
     
-    test_print("\n\n=== TEST FRAMEWORK INITIALIZED ===\n");
-    test_print("UART Output: 115200 baud\n\n");
+    printf("\n\n=== TEST FRAMEWORK INITIALIZED ===\n");
+    printf("UART Output: 115200 baud\n\n");
 }
 
 void test_run_suite(TestCase* tests, uint32_t count) {
-    test_print("Running %lu test(s)...\n\n", count);
+    printf("Running %lu test(s)...\n\n", count);
     
     for (uint32_t i = 0; i < count; i++) {
-        test_print("Test %lu: %s\n", i + 1, tests[i].name);
-        test_print("  -> ");
+        printf("Test %lu: %s\n", i + 1, tests[i].name);
+        printf("  -> ");
         
         // Run test
         TestResult result = tests[i].function();
         
         // Print result
         switch (result) {
-            case TEST_PASS: test_print("PASS\n\n"); break;
-            case TEST_FAIL: test_print("FAIL\n\n"); break;
-            case TEST_SKIP: test_print("SKIP\n\n"); break;
-            case TEST_TIMEOUT: test_print("TIMEOUT\n\n"); break;
+            case TEST_PASS: printf("PASS\n\n"); break;
+            case TEST_FAIL: printf("FAIL\n\n"); break;
+            case TEST_SKIP: printf("SKIP\n\n"); break;
+            case TEST_TIMEOUT: printf("TIMEOUT\n\n"); break;
         }
     }
 }
 
 void test_print_summary(void) {
-    test_print("\n=== TEST SUMMARY ===\n");
-    test_print("Total:  %lu\n", g_test_stats.total);
-    test_print("Passed: %lu\n", g_test_stats.passed);
-    test_print("Failed: %lu\n", g_test_stats.failed);
-    test_print("Skipped: %lu\n", g_test_stats.skipped);
+    printf("\n=== TEST SUMMARY ===\n");
+    printf("Total:  %lu\n", g_test_stats.total);
+    printf("Passed: %lu\n", g_test_stats.passed);
+    printf("Failed: %lu\n", g_test_stats.failed);
+    printf("Skipped: %lu\n", g_test_stats.skipped);
     
     if (g_test_stats.failed == 0) {
-        test_print("\n? ALL TESTS PASSED!\n");
+        printf("\n? ALL TESTS PASSED!\n");
     } else {
-        test_print("\n? %lu TEST(S) FAILED\n", g_test_stats.failed);
+        printf("\n? %lu TEST(S) FAILED\n", g_test_stats.failed);
     }
 }
 

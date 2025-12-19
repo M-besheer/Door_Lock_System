@@ -4,7 +4,7 @@
 #include "SYSTICK.h"
 
 TestResult test_i2c_init(void) {
-    test_print("Testing I2C Initialization...\n");
+    printf("Testing I2C Initialization...\n");
     
     I2C0_Init();
     test_delay_ms(100);
@@ -15,9 +15,9 @@ TestResult test_i2c_init(void) {
 }
 
 TestResult test_i2c_lcd_detect(void) {
-    test_print("Testing I2C LCD Detection...\n");
+    printf("Testing I2C LCD Detection...\n");
     
-    test_print("  Attempting to detect LCD at address 0x27...\n");
+    printf("  Attempting to detect LCD at address 0x27...\n");
     
     // Try to write to LCD (if it exists, it will ACK)
     // We'll use the LCD initialization sequence as a test
@@ -38,9 +38,9 @@ TestCase i2c_tests[] = {
 };
 
 void run_i2c_tests(void) {
-    test_print("\n-------------------------------\n");
-    test_print("         I2C TESTS\n");
-    test_print("-------------------------------\n");
+    printf("\n-------------------------------\n");
+    printf("         I2C TESTS\n");
+    printf("-------------------------------\n");
     
     test_init();
     test_run_suite(i2c_tests, sizeof(i2c_tests)/sizeof(i2c_tests[0]));

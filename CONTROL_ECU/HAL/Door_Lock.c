@@ -12,7 +12,7 @@
  * Pin:  PB0 (Bit 0)
  */
 #define PORTB_CLOCK_MASK    (0x02U) /* Bit 1 for Port B */
-#define LOCK_PIN_MASK       (0x01U) /* Bit 0 for PB0 */
+#define LOCK_PIN_MASK       (0x10U) /* Bit 0 for PB0 */
 
 void DoorLock_Init(void)
 {

@@ -4,7 +4,7 @@
 #include "SYSTICK.h"
 
 TestResult test_buzzer_init(void) {
-    test_print("Testing Buzzer Initialization...\n");
+    printf("Testing Buzzer Initialization...\n");
     
     Buzzer_Init();
     TEST_ASSERT(1, "Buzzer_Init() completed");
@@ -13,13 +13,13 @@ TestResult test_buzzer_init(void) {
 }
 
 TestResult test_buzzer_on_off(void) {
-    test_print("Testing Buzzer ON/OFF...\n");
+    printf("Testing Buzzer ON/OFF...\n");
     
-    test_print("  Buzzer ON for 500ms...\n");
+    printf("  Buzzer ON for 500ms...\n");
     Buzzer_Start();
     test_delay_ms(500);
     
-    test_print("  Buzzer OFF for 500ms...\n");
+    printf("  Buzzer OFF for 500ms...\n");
     Buzzer_Stop();
     test_delay_ms(500);
     
@@ -29,7 +29,7 @@ TestResult test_buzzer_on_off(void) {
 }
 
 TestResult test_buzzer_small_buzz(void) {
-    test_print("Testing Buzzer Small Buzz (200ms)...\n");
+    printf("Testing Buzzer Small Buzz (200ms)...\n");
     
     Buzzer_SmallBuzz();
     test_delay_ms(300);
@@ -40,7 +40,7 @@ TestResult test_buzzer_small_buzz(void) {
 }
 
 TestResult test_buzzer_alarm_pattern(void) {
-    test_print("Testing Buzzer Alarm Pattern...\n");
+    printf("Testing Buzzer Alarm Pattern...\n");
     
     // Alarm pattern: 3 short beeps
     for (int i = 0; i < 3; i++) {
@@ -50,7 +50,7 @@ TestResult test_buzzer_alarm_pattern(void) {
         test_delay_ms(100);
     }
     
-    test_print("  Alarm pattern completed\n");
+    printf("  Alarm pattern completed\n");
     TEST_ASSERT(1, "Buzzer pattern tested");
     
     return TEST_PASS;
@@ -65,9 +65,9 @@ TestCase buzzer_tests[] = {
 };
 
 void run_buzzer_tests(void) {
-    test_print("\n-------------------------------\n");
-    test_print("       BUZZER DRIVER TESTS\n");
-    test_print("-------------------------------\n");
+    printf("\n-------------------------------\n");
+    printf("       BUZZER DRIVER TESTS\n");
+    printf("-------------------------------\n");
     
     test_init();
     test_run_suite(buzzer_tests, sizeof(buzzer_tests)/sizeof(buzzer_tests[0]));
