@@ -90,10 +90,9 @@ int main(void) {
 
 void UART5_Handler(void){
         uint32_t status = UARTIntStatus(UART5_BASE, true);
-        UARTIntClear(UART5_BASE, status); // Clear the interrupt
 
         if (status & (UART_INT_RX | UART_INT_RT)) {
-            UART0_Flush();       // Clear any old noise
+            //UART0_Flush();       // Clear any old noise
             char command = UART0_ReceiveChar();
 
             char Data[7] = {"00000"};
@@ -148,6 +147,7 @@ void UART5_Handler(void){
                 break;
             }
         }
+        UARTIntClear(UART5_BASE, status);
 }
 
 void Control_SystemInit(void)

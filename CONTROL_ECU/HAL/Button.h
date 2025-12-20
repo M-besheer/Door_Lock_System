@@ -10,5 +10,6 @@
 // Function Prototypes
 void Button_Init(void);
 u8   Button_Read(void); 
+void Buzzer_Lalaland(void);
 
 #endif

@@ -15,4 +15,6 @@ void Buzzer_Start(void);
 /* Stop buzzing */
 void Buzzer_Stop(void);
 
+void Buzzer_Lalaland(void);
+
 #endif
