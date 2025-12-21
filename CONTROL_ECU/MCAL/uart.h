@@ -70,5 +70,5 @@ uint32_t UART5_GetInterruptStatus(void);
 bool     UART5_CheckRxInterrupt(uint32_t status);
 
 void     UART5_ClearInterruptStatus(uint32_t status);
-
+void UART5_ClearInterruptFlag(void);
 #endif /* UART_H_ */
