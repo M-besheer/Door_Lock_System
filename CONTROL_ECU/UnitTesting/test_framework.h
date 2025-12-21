@@ -32,12 +32,6 @@ typedef struct {
 // Global test stats
 extern TestStats g_test_stats;
 
-// Output functions (implemented in test_framework.c)
-void test_print(const char* format, ...);
-void test_print_string(const char* str);
-void test_print_hex(uint32_t value);
-void test_print_dec(uint32_t value);
-
 // Assertion macros
 #define TEST_ASSERT(condition, message, ...) \
     do { \

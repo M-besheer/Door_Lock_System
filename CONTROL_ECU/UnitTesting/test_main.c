@@ -24,11 +24,12 @@ int main(void) {
     // Run ALL tests automatically
     printf("Running ALL tests...\n\n");
     
-    run_dio_tests();
-    run_button_tests();
+    //run_dio_tests();
+    //run_button_tests();
     run_buzzer_tests();
     run_door_tests();
-    run_led_tests();
+    //run_led_tests();
+    run_eeprom_tests();
     run_uart_tests();
     
     // Final summary

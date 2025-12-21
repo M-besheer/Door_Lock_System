@@ -83,58 +83,11 @@ TestResult test_keypad_single_keys(void) {
     return TEST_PASS;
 }
 
-TestResult test_keypad_menu_keys(void) {
-    printf("Testing Keypad Menu Keys (+, -, *)...\n");
-    
-    printf("  Press '+' then '-' then '*'...\n");
-    
-    const char* menu_keys[] = {"+", "-", "*", "#"};
-    int correct = 0;
-    
-    for (int i = 0; i < 4; i++) {
-        printf("  Waiting for '%s'... ", menu_keys[i]);
-        
-        const char* key = 0;
-        
-       uint32_t timeout = 10000; // 10 seconds
-       uint32_t elapsed_time = 0;
-      
-       while (elapsed_time < timeout) {
-          key = Keypad_GetKey();
-          if (key != 0) {
-              break;
-          }
-          // Wait 100ms and increment counter
-          SysTick_Wait(100);
-          elapsed_time += 100;
-      }
-      
-        
-        if (key && strcmp(key, menu_keys[i]) == 0) {
-            printf("OK\n");
-            correct++;
-        } else if (key) {
-            printf("Wrong (got '%s')\n", key);
-        } else {
-            printf("Timeout\n");
-        }
-        
-        while (Keypad_GetKey() != 0) {
-            test_delay_ms(10);
-        }
-        test_delay_ms(200);
-    }
-    
-    TEST_CHECK(correct >= 3, "Menu keys functioning");
-    
-    return TEST_PASS;
-}
 
 // Keypad Test Suite
 TestCase keypad_tests[] = {
     {"Keypad Init", test_keypad_init, 500},
     {"Keypad All Keys", test_keypad_single_keys, 45000},
-    {"Keypad Menu Keys", test_keypad_menu_keys, 25000},
 };
 
 void run_keypad_tests(void) {

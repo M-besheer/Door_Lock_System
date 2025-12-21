@@ -7,33 +7,6 @@
 
 TestStats g_test_stats = {0};
 
-// Implement test_print using your UART0
-void test_print(const char* format, ...) {
-    char buffer[128];
-    va_list args;
-    va_start(args, format);
-    vsnprintf(buffer, sizeof(buffer), format, args);
-    va_end(args);
-    
-    UART0_SendString(buffer);
-}
-
-void test_print_string(const char* str) {
-    UART0_SendString(str);
-}
-
-void test_print_hex(uint32_t value) {
-    char buffer[16];
-    snprintf(buffer, sizeof(buffer), "0x%08lX", value);
-    UART0_SendString(buffer);
-}
-
-void test_print_dec(uint32_t value) {
-    char buffer[16];
-    snprintf(buffer, sizeof(buffer), "%lu", value);
-    UART0_SendString(buffer);
-}
-
 void test_init(void) {
     // Initialize UART for test output
     UART0_Init();  // Your UART5 driver (named UART0)

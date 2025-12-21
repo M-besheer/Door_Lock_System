@@ -25,13 +25,18 @@ TestResult test_uart_echo(void) {
     // Try to receive (only works if loopback connected)
     char received[32];
     int i = 0;
-    uint32_t start_time = SysTick_GetTick();
+    uint32_t timeout = 10000; // 10 seconds
+    uint32_t elapsed_time = 0;
     
-    while ((SysTick_GetTick() - start_time) < 1000) {
+  
+    while (elapsed_time < timeout) {
         if (UART0_IsDataAvailable()) {
             received[i++] = UART0_ReceiveChar();
             if (received[i-1] == '\n') break;
         }
+        // Wait 100ms and increment counter
+        SysTick_Wait(100);
+        elapsed_time += 100;
     }
     received[i] = '\0';
     

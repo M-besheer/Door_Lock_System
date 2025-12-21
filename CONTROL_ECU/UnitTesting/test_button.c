@@ -25,15 +25,18 @@ TestResult test_button_read_logic(void) {
     printf("  Please PRESS the button now...\n");
     
     uint32_t timeout = 10000; // 10 seconds
-    uint32_t start_time = SysTick_GetTick();
+    uint32_t elapsed_time = 0;
     u8 pressed_state = FALSE;
     
-    while ((SysTick_GetTick() - start_time) < timeout) {
+    while (elapsed_time < timeout) {
         pressed_state = Button_Read();
         if (pressed_state == TRUE) {
             break;
         }
-        test_delay_ms(100);
+        
+        // Wait 100ms and increment counter
+        SysTick_Wait(100);
+        elapsed_time += 100;
     }
     
     if (pressed_state == TRUE) {
