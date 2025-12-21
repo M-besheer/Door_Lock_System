@@ -17,6 +17,7 @@
 #include "../MCAL/GPTM.h"
 #include "../MCAL/uart.h"
 #include "../HAL/Button.h"
+#include "../HAL/Led.h"
 
 
 /* Definitions */
@@ -194,7 +195,11 @@ void Control_SystemInit(void)
   GPTM_Init();
 
   //NEW: HARD RESET BUTTON CONFIGURATION (PF4)
-  Button_HardReset_Init();            
+  Button_HardReset_Init();   
+  
+  Led_RedInit();
+  Led_BlueInit();
+  Led_GreenInit();
   
 }
 
@@ -211,7 +216,10 @@ void Control_CheckPassword(char* password)
        if(counter<3){
        Buzzer_SmallBuzz();
        counter++;
-        UART5_SendChar('0');
+       UART5_SendChar('0');
+       Led_RedTurnOn();
+       SysTick_Wait(200);
+       Led_RedTurnOff();
        } 
        else{
         UART5_SendChar('2');
@@ -228,12 +236,19 @@ void Control_SavePassword(char* password)
     }
 
     Memory_SavePassword(password);
+    Led_BlueTurnOn();
+    SysTick_Wait(200);
+    Led_BlueTurnOff();
 }
 
 void Control_OpenDoorSequence(void)
 {   
 
     DoorLock_Unlock();
+
+    Led_GreenTurnOn();
+    SysTick_Wait(200);
+    Led_GreenTurnOff();
     
     /* Start Timer0 */
     GPTM_DoorTimer_Start(g_doorTimeout);
@@ -243,6 +258,10 @@ void Control_OpenDoorSequence(void)
 void Control_ActivateAlarm(void)
 {   
     Buzzer_Start();
+
+    Led_RedTurnOn();
+    SysTick_Wait(200);
+    Led_RedTurnOff();
 
     /* Start Timer1 */
     GPTM_AlarmTimer_Start(ALARM_DURATION_SEC);
@@ -258,4 +277,7 @@ void Control_UpdateTimeout(uint32_t timeout)
 
   g_doorTimeout = (uint8_t)timeout;
   Memory_SaveTimeout(timeout);
+    Led_BlueTurnOn();
+    SysTick_Wait(200);
+    Led_BlueTurnOff();
 }
