@@ -420,7 +420,7 @@ void GetPassword(char *password) {
 
 void UART5_Handler(void) {
   //printf("UART HANDLER");
-    UART5_ICR_R = (1 << 4);       // Clear the interrupt flag
+  UART5_ClearInterruptFlag();
     received_cmd = UART5_ReceiveChar();    // Read the data
     data_ready = true;            // Signal to main that data is here
 }

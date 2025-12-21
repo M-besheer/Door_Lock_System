@@ -159,3 +159,8 @@ void UART5_ClearInterruptStatus(uint32_t status)
 {
     UARTIntClear(UART5_BASE, status);
 }
+
+void UART5_ClearInterruptFlag(void)
+{
+    UART5_ICR_R = (1 << 4);       // Clear the interrupt flag
+}
