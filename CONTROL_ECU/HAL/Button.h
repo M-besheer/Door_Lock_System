@@ -10,6 +10,7 @@
 // Function Prototypes
 void Button_Init(void);
 u8   Button_Read(void); 
-void Buzzer_Lalaland(void);
+void Button_HardReset_Init(void);
+void Button_ClearInterrupt(void);
 
 #endif

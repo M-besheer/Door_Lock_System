@@ -15,7 +15,7 @@
 #include "driverlib/timer.h"
 #include "GPTM.h"
 
-
+#define SYSTEM_CLOCK 16000000UL
 
 
 /* TivaWare Includes */
@@ -27,22 +27,30 @@ static void (*g_Timer0ACallback)(void) = 0;
 /* ================================================================= */
 /* INITIALIZATION                                                    */
 /* ================================================================= */
+/* ================================================================= */
+/* GLOBAL INIT - Call this ONCE in Control_SystemInit                */
+/* ================================================================= */
 void GPTM_Init(void)
 {
-    /* 1. Enable the Timer0 Peripheral Clock */
+    /* 1. Enable Clocks for Timer0 and Timer1 */
     SysCtlPeripheralEnable(SYSCTL_PERIPH_TIMER0);
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_TIMER1);
 
-    /* 2. Wait for it to be ready */
+    /* 2. Wait for Ready */
     while(!SysCtlPeripheralReady(SYSCTL_PERIPH_TIMER0));
+    while(!SysCtlPeripheralReady(SYSCTL_PERIPH_TIMER1));
 
-    /* 3. Configure Timer0 as two 16-bit timers concatenated to 32-bit */
+    /* 3. Configure both as 32-bit One-Shot Timers */
     TimerConfigure(TIMER0_BASE, TIMER_CFG_ONE_SHOT);
+    TimerConfigure(TIMER1_BASE, TIMER_CFG_ONE_SHOT);
 
-    /* 4. Enable Timeout Interrupt source inside the Timer */
+    /* 4. Enable Timeout Interrupt source inside the Timers */
     TimerIntEnable(TIMER0_BASE, TIMER_TIMA_TIMEOUT);
+    TimerIntEnable(TIMER1_BASE, TIMER_TIMA_TIMEOUT);
 
-    /* 5. Enable the Timer0A Interrupt in the NVIC (Microcontroller Core) */
-    IntEnable(INT_TIMER0A);
+    /* 5. Enable Interrupts in NVIC */
+    IntEnable(INT_TIMER0A); // For Door
+    IntEnable(INT_TIMER1A); // For Alarm
 }
 
 /* ================================================================= */
@@ -94,4 +102,44 @@ void Timer0A_Handler(void)
     {
         g_Timer0ACallback();
     }
+}
+
+/* ================================================================= */
+/* TIMER 0 (DOOR) HELPERS                                            */
+/* ================================================================= */
+void GPTM_DoorTimer_Start(uint32_t seconds)
+{
+    uint32_t loadValue = (seconds * SYSTEM_CLOCK) - 1;
+    TimerLoadSet(TIMER0_BASE, TIMER_A, loadValue);
+    TimerEnable(TIMER0_BASE, TIMER_A);
+}
+
+void GPTM_DoorTimer_Stop(void)
+{
+    TimerDisable(TIMER0_BASE, TIMER_A);
+}
+
+void GPTM_DoorTimer_ClearInt(void)
+{
+    TimerIntClear(TIMER0_BASE, TIMER_TIMA_TIMEOUT);
+}
+
+/* ================================================================= */
+/* TIMER 1 (ALARM) HELPERS                                           */
+/* ================================================================= */
+void GPTM_AlarmTimer_Start(uint32_t seconds)
+{
+    uint32_t loadValue = (seconds * SYSTEM_CLOCK) - 1;
+    TimerLoadSet(TIMER1_BASE, TIMER_A, loadValue);
+    TimerEnable(TIMER1_BASE, TIMER_A);
+}
+
+void GPTM_AlarmTimer_Stop(void)
+{
+    TimerDisable(TIMER1_BASE, TIMER_A);
+}
+
+void GPTM_AlarmTimer_ClearInt(void)
+{
+    TimerIntClear(TIMER1_BASE, TIMER_TIMA_TIMEOUT);
 }

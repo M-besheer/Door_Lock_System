@@ -1,22 +1,17 @@
-/******************************************************************************
+/**************************
  * File: uart.h
  * Module: UART (Universal Asynchronous Receiver/Transmitter)
- * Description: Header file for TM4C123GH6PM UART0 Driver (Register Level)
- * Author: Ahmedhh
- * Date: December 10, 2025
- * 
- * Configuration:
- *   - UART0 (PA0: RX, PA1: TX)
- *   - Baud Rate: 115200
- *   - Data: 8 bits
- *   - Parity: None
- *   - Stop: 1 bit
- ******************************************************************************/
+ * Description: Source file for TM4C123GH6PM UART5 Driver (TivaWare)
+ * Date: December 21, 2025
+ * * Configuration:
+ * - UART5 (PE4: RX, PE5: TX)
+ **************************/
 
 #ifndef UART_H_
 #define UART_H_
 
 #include <stdint.h>
+#include <stdbool.h>
 
 /******************************************************************************
  *                          Function Prototypes                                *
@@ -28,7 +23,7 @@
  * Uses PA0 (RX) and PA1 (TX).
  * System clock is assumed to be 16 MHz.
  */
-void UART0_Init(void);
+void UART5_Init(void);
 
 /*
  * UART0_SendChar
@@ -38,7 +33,7 @@ void UART0_Init(void);
  * Parameters:
  *   data - Character to transmit
  */
-void UART0_SendChar(char data);
+void UART5_SendChar(char data);
 
 /*
  * UART0_ReceiveChar
@@ -48,7 +43,7 @@ void UART0_SendChar(char data);
  * Returns:
  *   Received character
  */
-char UART0_ReceiveChar(void);
+char UART5_ReceiveChar(void);
 
 /*
  * UART0_SendString
@@ -57,7 +52,7 @@ char UART0_ReceiveChar(void);
  * Parameters:
  *   str - Pointer to null-terminated string to transmit
  */
-void UART0_SendString(const char *str);
+void UART5_SendString(const char *str);
 
 /*
  * UART0_IsDataAvailable
@@ -66,8 +61,14 @@ void UART0_SendString(const char *str);
  * Returns:
  *   1 if data is available, 0 otherwise
  */
-uint8_t UART0_IsDataAvailable(void);
+uint8_t UART5_IsDataAvailable(void);
 
-void UART0_Flush(void);
+void UART5_Flush(void);
+
+uint32_t UART5_GetInterruptStatus(void);
+
+bool     UART5_CheckRxInterrupt(uint32_t status);
+
+void     UART5_ClearInterruptStatus(uint32_t status);
 
 #endif /* UART_H_ */

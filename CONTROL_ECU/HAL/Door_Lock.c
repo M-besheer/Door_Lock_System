@@ -21,9 +21,7 @@ void DoorLock_Init(void)
     /* 1. Enable Clock for Port B */
     SYSCTL_RCGCGPIO_R |= PORTB_CLOCK_MASK;
     
-    /* Dummy read to ensure clock is stable before accessing registers */
     delay_loops = SYSCTL_RCGCGPIO_R;
-    /* (MISRA: Cast to void to indicate variable is intentionally unused after read) */
     (void)delay_loops; 
 
     /* 2. Configure PB0 direction to INPUT (Locked State) */
@@ -50,7 +48,7 @@ void DoorLock_Lock(void)
 {
     /* * To Lock: Turn Relay OFF.
      * Tiva cannot output 5V to match relay VCC.
-     * Solution: Set Direction to INPUT (Hi-Z) to disconnect Tiva.
+     * Solution: Set Direction to INPUT to disconnect Tiva.
      */
     GPIO_PORTB_DIR_R &= ~(LOCK_PIN_MASK);
 }

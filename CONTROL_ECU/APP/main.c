@@ -1,28 +1,22 @@
 /*****************************************************************************
- * File: main_test.c
- * Description: Control ECU Logic Test (Terminal I/O Version)
- * Note: Requires Semihosting/Debug Terminal enabled in IDE.
+ * File: main.c
+ * Description: Control ECU MAIN Application
  *****************************************************************************/
 
 #include "std_types.h"
-#include "tm4c123gh6pm.h"
 #include <stdint.h>
 #include <stdbool.h>
-//#include <stdio.h>      // Added for printf/scanf
 #include <string.h>
 #include <stdlib.h>    
-#include "../MCAL/uart.h"
-#include "inc/hw_memmap.h"
-#include "driverlib/uart.h"
-//#include "inc/hw_ints.h"
-#include "driverlib/interrupt.h"
 
 /* Drivers */
 #include "../HAL/Memory_Manager.h" 
 #include "../MCAL/SYSTICK.h"
 #include "../HAL/Door_Lock.h"
 #include "../HAL/Buzzer.h"
-#include "../HAL/Led.h"
+#include "../MCAL/GPTM.h"
+#include "../MCAL/uart.h"
+#include "../HAL/Button.h"
 
 
 /* Definitions */
@@ -62,7 +56,6 @@ void UART5_Handler(void);
 /* ========================================================================== */
 
 int main(void) {
-    int input_command;
     
     /* 1. Initialization */
     Control_SystemInit();
@@ -82,18 +75,17 @@ int main(void) {
     }
     
         
-    }
+}
 
 /* ========================================================================== */
-/* FUNCTION IMPLEMENTATIONS                                                   */
+/* INTERRUPT SERVICE ROUTINES (ISRs)                                          */
 /* ========================================================================== */
 
 void UART5_Handler(void){
-        uint32_t status = UARTIntStatus(UART5_BASE, true);
+        uint32_t status = UART5_GetInterruptStatus();
 
-        if (status & (UART_INT_RX | UART_INT_RT)) {
-            //UART0_Flush();       // Clear any old noise
-            char command = UART0_ReceiveChar();
+        if (UART5_CheckRxInterrupt(status)) {
+            char command = UART5_ReceiveChar();
 
             char Data[7] = {"00000"};
         
@@ -101,7 +93,7 @@ void UART5_Handler(void){
             switch(command) {
                 case CMD_CHECK_PASS:
                     for(int i=0; i<5; i++){
-                    Data[i] = UART0_ReceiveChar();
+                    Data[i] = UART5_ReceiveChar();
                     }
                     Data[5] = '\0'; 
 
@@ -110,7 +102,7 @@ void UART5_Handler(void){
                 
                 case CMD_SAVE_PASS:
                     for(int i=0; i<5; i++){
-                        Data[i] = UART0_ReceiveChar();
+                        Data[i] = UART5_ReceiveChar();
                         }
                     Data[5] = '\0'; 
 
@@ -127,7 +119,7 @@ void UART5_Handler(void){
 
                 case CMD_SET_TIMEOUT:
                     for(int i=0; i<5; i++){
-                     Data[i] = UART0_ReceiveChar();
+                     Data[i] = UART5_ReceiveChar();
                     }
                     Data[5] = '\0'; 
 
@@ -136,88 +128,93 @@ void UART5_Handler(void){
                 
                 case CMD_Check_First_Time:
                     if(g_isfirstime == 1){
-                        UART0_SendChar('1');
+                        UART5_SendChar('1');
                     } else {
-                        UART0_SendChar('0');
+                        UART5_SendChar('0');
                     }
                     break;
                 default:
-                    UART0_SendChar('9');
-                    UART0_Flush();
+                    UART5_SendChar('9');
+                    UART5_Flush();
                 break;
             }
         }
-        UARTIntClear(UART5_BASE, status);
+        UART5_ClearInterruptStatus(status);
 }
+
+void Timer0A_Handler_CloseDoor(void)
+{
+    GPTM_DoorTimer_ClearInt(); // Clear Flag
+    
+    DoorLock_Lock();
+    
+    SysTick_Wait(500);
+
+    
+    /* Stop Timer */
+    GPTM_DoorTimer_Stop();
+}
+
+void Timer1A_Handler_StopAlarm(void)
+{
+    GPTM_AlarmTimer_ClearInt(); // Clear Flag
+    
+    Buzzer_Stop();
+    
+    /* Stop Timer */
+    GPTM_AlarmTimer_Stop();     
+}
+
+void GPIOF_Handler(void)
+{
+    /* 1. Clear the Interrupt Flag immediately */
+    Button_ClearInterrupt(); 
+    /* 3. Execute the Memory Reset Logic */
+    HardReset();
+    
+
+    /* 4. Reset RAM Variables to match Memory */
+    g_doorTimeout = 5; 
+    g_isfirstime  = 1; 
+
+}
+
+/* ========================================================================== */
+/* FUNCTION IMPLEMENTATIONS                                                   */
+/* ========================================================================== */
+
 
 void Control_SystemInit(void)
 {
   __asm("CPSIE I"); // Enable Interrupts
-  UART0_Init();
+  UART5_Init();
   DoorLock_Init();
   Buzzer_Init();
   Memory_Init();
-  Led_RedInit();
-  Led_BlueInit();
-  Led_GreenInit();
-  /* ======================================================= */
-  /* NEW: HARD RESET BUTTON CONFIGURATION (PF4)              */
-  /* ======================================================= */
-  SYSCTL_RCGCGPIO_R |= 0x20;             // 1. Enable Clock for Port F
-  while((SYSCTL_PRGPIO_R & 0x20) == 0)  // 2. Wait for Ready
-  {
-    /* Wait for Peripheral Ready */
-  } 
+  GPTM_Init();
 
-  GPIO_PORTF_LOCK_R = 0x4C4F434B;        // 3. Unlock Port F (Required for PF0, good practice)
-  GPIO_PORTF_CR_R |= 0x10;               // 4. Commit PF4
+  //NEW: HARD RESET BUTTON CONFIGURATION (PF4)
+  Button_HardReset_Init();            
   
-  GPIO_PORTF_DIR_R &= ~0x10;             // 5. PF4 is Input
-  GPIO_PORTF_PUR_R |= 0x10;              // 6. Enable Pull-Up Resistor
-  GPIO_PORTF_DEN_R |= 0x10;              // 7. Digital Enable
-
-  /* Interrupt Configuration */
-  GPIO_PORTF_IS_R &= ~0x10;              // Edge Sensitive
-  GPIO_PORTF_IBE_R &= ~0x10;             // Not both edges
-  GPIO_PORTF_IEV_R &= ~0x10;             // Falling Edge (Press)
-  GPIO_PORTF_ICR_R = 0x10;               // Clear any prior flags
-  GPIO_PORTF_IM_R |= 0x10;               // Unmask (Enable) Interrupt for PF4
-
-  /* NVIC Configuration (IRQ 30 for Port F) */
-  NVIC_EN0_R |= (1 << 30);               
-  
-  //printf("[Init] Hard Reset Button (PF4) Enabled.\n");
 }
 
 void Control_CheckPassword(char* password)
 {
-   Led_BlueTurnOn();
-   SysTick_Wait(200);
-   Led_BlueTurnOff();
    bool Check = Memory_CheckPassword(password);
    SysTick_Wait(200);
 
    
    if(Check) {
        counter = 0;
-       UART0_SendChar('1');
-       Led_GreenTurnOn();
-       SysTick_Wait(500);
-       Led_GreenTurnOff();
+       UART5_SendChar('1');
    } else {
        if(counter<3){
        Buzzer_SmallBuzz();
        counter++;
-        UART0_SendChar('0');
-        Led_RedTurnOn();
-        SysTick_Wait(500);
-        Led_RedTurnOff();
+        UART5_SendChar('0');
        } 
        else{
-        UART0_SendChar('2');
-        Led_RedTurnOn();
-        SysTick_Wait(1000);
-        Led_RedTurnOff();
+        UART5_SendChar('2');
         Control_ActivateAlarm();
         }
    }
@@ -225,9 +222,6 @@ void Control_CheckPassword(char* password)
 
 void Control_SavePassword(char* password)
 {    
-    Led_GreenTurnOn();
-    SysTick_Wait(500);
-    Led_GreenTurnOff();
     if(g_isfirstime == 1){
         g_isfirstime = 0;
         Memory_SaveCheckFirstTime(g_isfirstime);
@@ -238,111 +232,30 @@ void Control_SavePassword(char* password)
 
 void Control_OpenDoorSequence(void)
 {   
-    Led_BlueTurnOn();
-    SysTick_Wait(500);
-    Led_BlueTurnOff();
+
     DoorLock_Unlock();
     
-    /* Timer Setup */
-    uint32_t delay_cycles = g_doorTimeout * 16000000;
-     
-    SYSCTL_RCGCTIMER_R |= 0x01;       // Enable Timer0
-    volatile uint32_t d = SYSCTL_RCGCTIMER_R; // Delay
-    
-    TIMER0_CTL_R = 0x00;              // Disable
-    TIMER0_CFG_R = 0x00;              // 32-bit
-    TIMER0_TAMR_R = 0x01;             // One-Shot
-    TIMER0_TAILR_R = delay_cycles;    // Load delay
-    TIMER0_IMR_R = 0x01;              // Enable Interrupt
-    NVIC_EN0_R = 1 << 19;             // NVIC Enable
-    TIMER0_CTL_R |= 0x01;             // Enable Timer
+    /* Start Timer0 */
+    GPTM_DoorTimer_Start(g_doorTimeout);
     
 }
 
 void Control_ActivateAlarm(void)
 {   
-    Led_BlueTurnOn();
-    SysTick_Wait(500);
-    Led_BlueTurnOff();
     Buzzer_Start();
 
-    /* Timer 1 Setup */
-    SYSCTL_RCGCTIMER_R |= 0x02;      
-    volatile uint32_t delay = SYSCTL_RCGCTIMER_R;
-    (void)delay;
-
-    TIMER1_CTL_R = 0x00000000;       
-    TIMER1_CFG_R = 0x00000000;       
-    TIMER1_TAMR_R = 0x00000001;      
-    TIMER1_TAILR_R = ALARM_CYCLES;   
-    TIMER1_ICR_R = 0x00000001;       
-    TIMER1_IMR_R = 0x00000001;       
-    NVIC_EN0_R = (1 << 21);
-    TIMER1_CTL_R |= 0x00000001;
+    /* Start Timer1 */
+    GPTM_AlarmTimer_Start(ALARM_DURATION_SEC);
     
 }
 
 void Control_UpdateTimeout(uint32_t timeout)
 {  
-    Led_BlueTurnOn();
-    SysTick_Wait(500);
-    Led_BlueTurnOff();
   if(timeout < 5 || timeout > 30) {
-    UART0_SendChar('8');
+    UART5_SendChar('8');
       return;
   }
 
   g_doorTimeout = (uint8_t)timeout;
   Memory_SaveTimeout(timeout);
-}
-
-/* ========================================================================== */
-/* INTERRUPT SERVICE ROUTINES (ISRs)                                          */
-/* ========================================================================== */
-
-void Timer0A_Handler_CloseDoor(void)
-{
-    TIMER0_ICR_R = 0x01; // Clear Flag
-    
-    DoorLock_Lock();
-    
-    SysTick_Wait(500);
-
-    UART0_Flush(); // <--- ADD THIS HERE (Clears the solenoid noise spike)
-    
-    /* Stop Timer */
-    TIMER0_CTL_R &= ~0x01;
-}
-
-void Timer1A_Handler_StopAlarm(void)
-{
-    TIMER1_ICR_R = 0x00000001; // Clear Flag
-    
-    Buzzer_Stop();
-    
-    /* Stop Timer */
-    TIMER1_CTL_R &= ~0x00000001;     
-}
-
-void GPIOF_Handler(void)
-{
-    /* 1. Clear the Interrupt Flag immediately */
-    GPIO_PORTF_ICR_R = 0x10; 
-
-    /* 2. Visual Feedback */
-    //printf("\n\n[Interrupt] !!! HARD RESET BUTTON PRESSED !!!\n");
-    
-    Led_RedTurnOn();
-    SysTick_Wait(500);
-    Led_RedTurnOff();
-    /* 3. Execute the Memory Reset Logic */
-    HardReset();
-    
-
-    /* 4. Reset RAM Variables to match Memory */
-    g_doorTimeout = 5; 
-    g_isfirstime  = 1; 
-
-   // printf("[System] Factory Defaults Restored. \n");
-    //printf("Please Enter Command Number: "); 
 }
