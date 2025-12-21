@@ -172,6 +172,9 @@ void GPIOF_Handler(void)
     Button_ClearInterrupt(); 
     /* 3. Execute the Memory Reset Logic */
     HardReset();
+    Led_RedTurnOn();
+    SysTick_Wait(200);
+    Led_RedTurnOff();
     
 
     /* 4. Reset RAM Variables to match Memory */
@@ -213,7 +216,7 @@ void Control_CheckPassword(char* password)
        counter = 0;
        UART5_SendChar('1');
    } else {
-       if(counter<3){
+       if(counter<2){
        Buzzer_SmallBuzz();
        counter++;
        UART5_SendChar('0');
