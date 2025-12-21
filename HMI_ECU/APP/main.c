@@ -8,6 +8,7 @@
 #include <string.h> // REQUIRED for strcat, strcpy, strcmp
 #include <ctype.h>  // REQUIRED for isdigit()
 #include "std_types.h"
+#include "tm4c123gh6pm.h"
 #include <stdint.h>    // Defines uint32_t, uint8_t
 #include <stdbool.h>  // Defines bool
 #include <stdio.h>    // <--- REQUIRED for printf
@@ -18,18 +19,23 @@
 #include "keypad.h"
 #include "ADC.h"
 #include "potentiometer.h"
+#include "driverlib/interrupt.h"
 
 // --- FUNCTION PROTOTYPE ---
 // Function to handle the password entry logic
 void GetPassword(char *password);
 int CheckPassword(char *password, int *menu);
-
+void UART5_Handler(void);
+volatile char received_cmd = 0;
+volatile bool data_ready = false;
 
 /*
  * Main function
  */
 int main()
 {
+    __asm("CPSIE I"); // Enable Interrupts
+
     Led_RedInit();
     Led_BlueInit();
     Led_GreenInit();
@@ -37,19 +43,32 @@ int main()
     Lcd_Init();
     POT_Init();
     Keypad_Init();
-    UART0_Init();
+    UART5_Init();
     SysTick_Wait(50);  /* Allow ADC to stabilize */
-    
+    IntMasterEnable();
+    Lcd_DisplayString("System Ready..."); // Add this!
+    SysTick_Wait(1000);
     while (1)
     {
         
         char isSaved;
         // Use char arrays for C strings, initialized to null terminator {0}
         char password[6] = {0}; // For 5 chars + '\0'
-        UART0_Flush(); // <--- ADD THIS HERE
-        UART0_SendChar('6'); //////////////////////////////////////////////////////check if pass exists
-        SysTick_Wait(500);
-        isSaved = UART0_ReceiveChar(); /////////////////////////////////////returns bool 0: not set, 1:Set
+        UART5_Flush(); // <--- ADD THIS HERE
+        UART5_SendChar('6'); //////////////////////////////////////////////////////check if pass exists
+        
+        while(!data_ready) {
+          // This command puts the CPU into Sleep Mode
+          __asm(" WFI "); 
+          
+          // The CPU is now frozen here until an interrupt fires.
+          // When the UART interrupt happens, it jumps to UART5_Handler,
+          // sets data_ready = true, and then comes back here to re-check the loop.
+      }
+      isSaved = received_cmd;
+      data_ready = false;
+        
+      //  isSaved = UART5_ReceiveChar(); /////////////////////////////////////returns bool 0: not set, 1:Set
         
         if (isSaved == '1'){ 
             Lcd_Clear();
@@ -63,18 +82,18 @@ int main()
             
             // Compare the string pointer to the "#" string literal
                               
-                UART0_SendChar('2'); 
-                UART0_SendString(password);
+                UART5_SendChar('2'); 
+                UART5_SendString(password);
                 isSaved = true; 
-            
+                Lcd_Clear();
+                Lcd_DisplayString("Password Saved");
+                SysTick_Wait(2000);
 
         }
 
         if (isSaved == '0')
         {
-            Lcd_Clear();
-            Lcd_DisplayString("Password Saved");
-            SysTick_Wait(2000);
+
             Lcd_Clear();
             Lcd_GoToRowColumn(0,0);
             Lcd_DisplayString("1: Open Door");
@@ -145,7 +164,7 @@ int main()
                         if (CheckPassword(password, &menu)==1){
                           //printf("pass checked");
                                SysTick_Wait(500);
-                               UART0_SendChar('3');
+                               UART5_SendChar('3');
                                Lcd_Clear();
                                Lcd_GoToRowColumn(0,0);
                                Lcd_DisplayString("Welcome Home!");
@@ -153,7 +172,7 @@ int main()
                         
                         SysTick_Wait(6000); //////////////////////Should stay on welcome until door closes?????
                         
-                        UART0_Flush(); // <--- ADD THIS HERE (Clears the solenoid noise spike)
+                        UART5_Flush(); // <--- ADD THIS HERE (Clears the solenoid noise spike)
                         
                         menu = 0;
                         Lcd_Clear();
@@ -175,8 +194,8 @@ int main()
                             Lcd_DisplayString("Enter new Pass: ");
                             GetPassword(password);
                             SysTick_Wait(500);
-                            UART0_SendChar('2');
-                            UART0_SendString(password);
+                            UART5_SendChar('2');
+                            UART5_SendString(password);
                             Lcd_Clear();
                             Lcd_GoToRowColumn(0,0);
                             Lcd_DisplayString("Password Set!");
@@ -247,8 +266,8 @@ int main()
                                     // You would typically save this value to EEPROM or a global variable here.
                                     SysTick_Wait(500);
 
-                                    UART0_SendChar('5');
-                                    UART0_SendString(time_str);
+                                    UART5_SendChar('5');
+                                    UART5_SendString(time_str);
                                   
                                   
                                     Lcd_Clear();
@@ -297,10 +316,28 @@ int CheckPassword(char *password, int *menu)
     // The loop runs for one less than the buffer size (e.g., 5 characters for a size 6 buffer)
       GetPassword(password);
       SysTick_Wait(500);
-      UART0_Flush();
-      UART0_SendChar('1');
-      UART0_SendString(password);
-      correctPass = (int)UART0_ReceiveChar()-'0';  //printf("check pass: %d", correctPass);
+      UART5_Flush();
+      UART5_SendChar('1');
+      UART5_SendString(password);
+      
+      
+      
+      while(!data_ready) {
+          // This command puts the CPU into Sleep Mode
+        __asm(" WFI "); 
+          
+          // The CPU is now frozen here until an interrupt fires.
+          // When the UART interrupt happens, it jumps to UART5_Handler,
+          // sets data_ready = true, and then comes back here to re-check the loop.
+      }
+
+      correctPass = (int)received_cmd - '0';
+      data_ready = false;
+            //correctPass = (int)UART5_ReceiveChar()-'0';      //printf("check pass: %d", correctPass);
+
+      
+      
+      
       Led_GreenTurnOn();
       SysTick_Wait(500);
       Led_GreenTurnOff();
@@ -379,4 +416,11 @@ void GetPassword(char *password) {
         
         // Debug output: use %s for strings, not %c for pointers
     }
+}
+
+void UART5_Handler(void) {
+  //printf("UART HANDLER");
+  UART5_ClearInterruptFlag();
+    received_cmd = UART5_ReceiveChar();    // Read the data
+    data_ready = true;            // Signal to main that data is here
 }
