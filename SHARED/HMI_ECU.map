@@ -1,0 +1,655 @@
+###############################################################################
+#
+# IAR ELF Linker V9.10.1.308/W64 for ARM                  21/Dec/2025  21:46:08
+# Copyright 2007-2021 IAR Systems AB.
+#
+#    Output file  =
+#        C:\Users\Lenovo\Desktop\Senior-1\Fall 2025\CSE211 Introduction to
+#        Embedded
+#        Systems\Project\Door_Lock_System\HMI_ECU\Debug\Exe\HMI_ECU.out
+#    Map file     =
+#        C:\Users\Lenovo\Desktop\Senior-1\Fall 2025\CSE211 Introduction to
+#        Embedded
+#        Systems\Project\Door_Lock_System\HMI_ECU\Debug\List\HMI_ECU.map
+#    Command line =
+#        -f "C:\Users\Lenovo\Desktop\Senior-1\Fall 2025\CSE211 Introduction to
+#        Embedded
+#        Systems\Project\Door_Lock_System\HMI_ECU\Debug\List\HMI_ECU.map.rsp"
+#        ("C:\Users\Lenovo\Desktop\Senior-1\Fall 2025\CSE211 Introduction to
+#        Embedded
+#        Systems\Project\Door_Lock_System\HMI_ECU\Debug\Obj\MCAL\ADC.o"
+#        "C:\Users\Lenovo\Desktop\Senior-1\Fall 2025\CSE211 Introduction to
+#        Embedded
+#        Systems\Project\Door_Lock_System\HMI_ECU\Debug\Obj\HAL\Button.o"
+#        "C:\Users\Lenovo\Desktop\Senior-1\Fall 2025\CSE211 Introduction to
+#        Embedded
+#        Systems\Project\Door_Lock_System\HMI_ECU\Debug\Obj\MCAL\Dio.o"
+#        "C:\Users\Lenovo\Desktop\Senior-1\Fall 2025\CSE211 Introduction to
+#        Embedded
+#        Systems\Project\Door_Lock_System\HMI_ECU\Debug\Obj\MCAL\I2C.o"
+#        "C:\Users\Lenovo\Desktop\Senior-1\Fall 2025\CSE211 Introduction to
+#        Embedded
+#        Systems\Project\Door_Lock_System\HMI_ECU\Debug\Obj\HAL\KEYPAD.o"
+#        "C:\Users\Lenovo\Desktop\Senior-1\Fall 2025\CSE211 Introduction to
+#        Embedded Systems\Project\Door_Lock_System\HMI_ECU\Debug\Obj\HAL\LCD.o"
+#        "C:\Users\Lenovo\Desktop\Senior-1\Fall 2025\CSE211 Introduction to
+#        Embedded Systems\Project\Door_Lock_System\HMI_ECU\Debug\Obj\HAL\Led.o"
+#        "C:\Users\Lenovo\Desktop\Senior-1\Fall 2025\CSE211 Introduction to
+#        Embedded
+#        Systems\Project\Door_Lock_System\HMI_ECU\Debug\Obj\APP\main.o"
+#        "C:\Users\Lenovo\Desktop\Senior-1\Fall 2025\CSE211 Introduction to
+#        Embedded
+#        Systems\Project\Door_Lock_System\HMI_ECU\Debug\Obj\HAL\potentiometer.o"
+#        "C:\Users\Lenovo\Desktop\Senior-1\Fall 2025\CSE211 Introduction to
+#        Embedded
+#        Systems\Project\Door_Lock_System\HMI_ECU\Debug\Obj\APP\startup_ewarm.o"
+#        "C:\Users\Lenovo\Desktop\Senior-1\Fall 2025\CSE211 Introduction to
+#        Embedded
+#        Systems\Project\Door_Lock_System\HMI_ECU\Debug\Obj\MCAL\SYSTICK.o"
+#        "C:\Users\Lenovo\Desktop\Senior-1\Fall 2025\CSE211 Introduction to
+#        Embedded
+#        Systems\Project\Door_Lock_System\HMI_ECU\Debug\Obj\MCAL\UART.o"
+#        --no_out_extension -o "C:\Users\Lenovo\Desktop\Senior-1\Fall
+#        2025\CSE211 Introduction to Embedded
+#        Systems\Project\Door_Lock_System\HMI_ECU\Debug\Exe\HMI_ECU.out"
+#        --redirect _Printf=_PrintfFullNoMb --redirect _Scanf=_ScanfFullNoMb
+#        --map "C:\Users\Lenovo\Desktop\Senior-1\Fall 2025\CSE211 Introduction
+#        to Embedded
+#        Systems\Project\Door_Lock_System\HMI_ECU\Debug\List\HMI_ECU.map" --log
+#        call_graph --log_file "C:\Users\Lenovo\Desktop\Senior-1\Fall
+#        2025\CSE211 Introduction to Embedded
+#        Systems\Project\Door_Lock_System\HMI_ECU\Debug\List\HMI_ECU.log"
+#        --config "C:\Program Files\IAR Systems\Embedded Workbench
+#        9.0\arm\config\linker\TexasInstruments\TM4C123GH6.icf" --semihosting
+#        C:\ti\TivaWare_C_Series-2.2.0.295\driverlib\ewarm\Exe\driverlib.a
+#        --entry __iar_program_start --vfe --enable_stack_usage --text_out
+#        locale)
+#
+###############################################################################
+
+*******************************************************************************
+*** MESSAGES
+***
+
+Warning[Lt009]: Inconsistent wchar_t size
+            gpio.o(driverlib.a) and 6 other objects in driverlib.a have wchar_t
+                      size 16 bits
+            ADC.o and 38 other objects, some of them in dl7M_tln.a and 16 other
+                      libraries have wchar_t size 32 bits
+Warning[Ls018]: [stack usage analysis] the function "__iar_program_start" is a
+          call graph root, but there are calls to it
+Warning[Ls015]: [stack usage analysis] at least one function appears to be
+          uncalled. Example: "UART5_Handler". A complete list of uncalled
+          functions is in the map file.
+
+
+*******************************************************************************
+*** RUNTIME MODEL ATTRIBUTES
+***
+
+CppFlavor       = *
+__SystemLibrary = DLib
+__dlib_version  = 6
+
+
+*******************************************************************************
+*** HEAP SELECTION
+***
+
+The basic heap was selected because no calls to memory allocation
+functions were found in the application outside of system library
+functions, and there are calls to deallocation functions in the
+application.
+
+
+*******************************************************************************
+*** PLACEMENT SUMMARY
+***
+
+"A0":  place at address 0x0 { ro section .intvec };
+"P1":  place in [from 0x0 to 0x3'ffff] { ro };
+define block CSTACK with size = 4K, alignment = 8 { };
+define block HEAP with size = 8K, alignment = 8 { };
+"P2":  place in [from 0x2000'0000 to 0x2000'7fff] {
+          rw, block CSTACK, block HEAP };
+do not initialize { rw section .noinit };
+initialize by copy { rw };
+
+  Section            Kind         Address    Size  Object
+  -------            ----         -------    ----  ------
+"A0":                                       0x26c
+  .intvec            const            0x0   0x26c  startup_ewarm.o [1]
+                                  - 0x26c   0x26c
+
+"P1":                                      0x372c
+  .text              ro code        0x26c   0xf16  xprintffull_nomb.o [4]
+  .text              ro code       0x1182    0x2a  copy_init3.o [7]
+  .text              ro code       0x11ac    0x16  strchr.o [7]
+  .text              ro code       0x11c2    0x1a  xsnprout.o [4]
+  .text              ro code       0x11dc    0x40  xfail_s.o [4]
+  .text              ro code       0x121c    0x36  strlen.o [7]
+  .rodata            const         0x1252     0x2  KEYPAD.o [2]
+  .text              ro code       0x1254    0x58  memchr.o [7]
+  .text              ro code       0x12ac    0x76  ABImemcpy_unaligned.o [7]
+  .rodata            const         0x1322     0x2  KEYPAD.o [2]
+  .text              ro code       0x1324    0x70  frexp.o [6]
+  .text              ro code       0x1394    0x34  DblCmpLe.o [6]
+  .text              ro code       0x13c8    0x34  DblCmpGe.o [6]
+  .text              ro code       0x13fc   0x13a  ldexp.o [6]
+  .rodata            const         0x1536     0x2  KEYPAD.o [2]
+  .text              ro code       0x1538    0x36  DblToS32.o [6]
+  .rodata            const         0x156e     0x2  KEYPAD.o [2]
+  .text              ro code       0x1570    0x22  S32ToDbl.o [6]
+  .rodata            const         0x1592     0x2  KEYPAD.o [2]
+  .text              ro code       0x1594   0x24e  DblAddSub.o [6]
+  .rodata            const         0x17e2     0x2  KEYPAD.o [2]
+  .text              ro code       0x17e4   0x246  DblDiv.o [6]
+  .rodata            const         0x1a2a     0x2  KEYPAD.o [2]
+  .text              ro code       0x1a2c    0x22  DblToU32.o [6]
+  .rodata            const         0x1a4e     0x2  KEYPAD.o [2]
+  .text              ro code       0x1a50    0x1c  U32ToDbl.o [6]
+  .text              ro code       0x1a6c   0x1aa  DblMul.o [6]
+  .rodata            const         0x1c16     0x2  KEYPAD.o [2]
+  .text              ro code       0x1c18   0x230  I64DivMod.o [7]
+  .text              ro code       0x1e48     0x6  abort.o [4]
+  .rodata            const         0x1e4e     0x2  KEYPAD.o [2]
+  .text              ro code       0x1e50     0x2  I64DivZer.o [7]
+  .rodata            const         0x1e52     0x2  KEYPAD.o [2]
+  .text              ro code       0x1e54    0x14  exit.o [8]
+  .text              ro code       0x1e68    0x7c  iarttio.o [8]
+  .text              ro code       0x1ee4     0x8  XShttio.o [4]
+  .text              ro code       0x1eec   0x554  main.o [1]
+  .text              ro code       0x2440    0x46  Led.o [2]
+  .rodata            const         0x2486     0x2  KEYPAD.o [2]
+  .text              ro code       0x2488    0x58  SYSTICK.o [3]
+  .text              ro code       0x24e0   0x172  LCD.o [2]
+  .text              ro code       0x2652    0x2a  potentiometer.o [2]
+  .text              ro code       0x267c   0x134  KEYPAD.o [2]
+  .text              ro code       0x27b0    0xcc  UART.o [3]
+  .text              ro code       0x287c    0x84  interrupt.o [5]
+  .text              ro code       0x2900    0x66  ABImemset.o [7]
+  .rodata            const         0x2966     0x2  KEYPAD.o [2]
+  .text              ro code       0x2968    0x12  strcmp.o [7]
+  .rodata            const         0x297a     0x2  KEYPAD.o [2]
+  .text              ro code       0x297c    0x44  snprintf.o [4]
+  .text              ro code       0x29c0     0xa  isdigit.o [4]
+  .rodata            const         0x29ca     0x2  KEYPAD.o [2]
+  .text              ro code       0x29cc   0x310  Dio.o [3]
+  .text              ro code       0x2cdc    0x28  systick.o [5]
+  .text              ro code       0x2d04   0x1e8  sysctl.o [5]
+  .text              ro code       0x2eec    0x8c  I2C.o [3]
+  .text              ro code       0x2f78   0x118  ADC.o [3]
+  .text              ro code       0x3090   0x300  gpio.o [5]
+  .text              ro code       0x3390    0xc6  uart.o [5]
+  .rodata            const         0x3456     0x2  KEYPAD.o [2]
+  .text              ro code       0x3458     0x8  cpu.o [5]
+  .text              ro code       0x3460    0x28  printf.o [4]
+  .text              ro code       0x3488    0x7c  i2c.o [5]
+  Initializer bytes  const         0x3504    0x54  <for P2-1>
+  .rodata            const         0x3558    0x40  Dio.o [3]
+  .rodata            const         0x3598    0x34  Dio.o [3]
+  .rodata            const         0x35cc    0x34  Dio.o [3]
+  .rodata            const         0x3600    0x34  Dio.o [3]
+  .rodata            const         0x3634    0x2c  Dio.o [3]
+  .rodata            const         0x3660    0x2c  Dio.o [3]
+  .text              ro code       0x368c    0x28  data_init.o [7]
+  .text              ro code       0x36b4    0x22  fpinit_M.o [6]
+  .text              ro code       0x36d6    0x22  iarwrite.o [8]
+  .iar.init_table    const         0x36f8    0x14  - Linker created -
+  .text              ro code       0x370c    0x20  putchar.o [4]
+  .text              ro code       0x372c    0x10  write.o [8]
+  .text              ro code       0x373c    0x1e  dwrite.o [8]
+  .text              ro code       0x375a    0x20  iarwstd.o [8]
+  .text              ro code       0x377c    0x1e  startup_ewarm.o [1]
+  .text              ro code       0x379c    0x1c  cstartup_M.o [7]
+  .text              ro code       0x37b8    0x1e  cmain.o [7]
+  .text              ro code       0x37d6     0x4  low_level_init.o [4]
+  .text              ro code       0x37da     0x4  exit.o [4]
+  .text              ro code       0x37e0     0xa  cexit.o [7]
+  .rodata            const         0x37ec    0x18  Dio.o [3]
+  .text              ro code       0x3804    0x16  xprout.o [4]
+  .rodata            const         0x381c    0x14  main.o [1]
+  .rodata            const         0x3830    0x14  main.o [1]
+  .rodata            const         0x3844    0x14  main.o [1]
+  .rodata            const         0x3858    0x14  main.o [1]
+  .rodata            const         0x386c    0x14  main.o [1]
+  .rodata            const         0x3880    0x14  main.o [1]
+  .rodata            const         0x3894    0x14  main.o [1]
+  .rodata            const         0x38a8    0x14  main.o [1]
+  .rodata            const         0x38bc    0x14  main.o [1]
+  .rodata            const         0x38d0    0x10  main.o [1]
+  .rodata            const         0x38e0    0x10  main.o [1]
+  .rodata            const         0x38f0    0x10  main.o [1]
+  .rodata            const         0x3900    0x10  main.o [1]
+  .rodata            const         0x3910    0x10  main.o [1]
+  .rodata            const         0x3920    0x10  main.o [1]
+  .rodata            const         0x3930    0x10  main.o [1]
+  .rodata            const         0x3940    0x10  main.o [1]
+  .rodata            const         0x3950    0x10  main.o [1]
+  .rodata            const         0x3960     0xc  main.o [1]
+  .rodata            const         0x396c     0xc  main.o [1]
+  .rodata            const         0x3978     0x8  main.o [1]
+  .rodata            const         0x3980     0x8  main.o [1]
+  .rodata            const         0x3988     0x4  KEYPAD.o [2]
+  .rodata            const         0x398c     0x4  KEYPAD.o [2]
+  .rodata            const         0x3990     0x4  KEYPAD.o [2]
+  .rodata            const         0x3994     0x4  KEYPAD.o [2]
+  .rodata            const         0x3998     0x0  copy_init3.o [7]
+                                 - 0x3998  0x372c
+
+"P2", part 1 of 2:                           0x54
+  P2-1                        0x2000'0000    0x52  <Init block>
+    .data            inited   0x2000'0000    0x40  KEYPAD.o [2]
+    .data            inited   0x2000'0040     0x8  XShttio.o [4]
+    .bss             inited   0x2000'0048     0x4  main.o [1]
+    .bss             inited   0x2000'004c     0x4  xfail_s.o [4]
+    .bss             inited   0x2000'0050     0x1  main.o [1]
+    .bss             inited   0x2000'0051     0x1  main.o [1]
+                            - 0x2000'0052    0x52
+
+"P2", part 2 of 2:                          0x800
+  .noinit            uninit   0x2000'0054   0x800  startup_ewarm.o [1]
+                            - 0x2000'0854   0x800
+
+Unused ranges:
+
+         From           To      Size
+         ----           --      ----
+       0x3998     0x3'ffff  0x3'c668
+  0x2000'0854  0x2000'7fff    0x77ac
+
+
+*******************************************************************************
+*** INIT TABLE
+***
+
+          Address      Size
+          -------      ----
+Copy (__iar_copy_init3)
+    1 source range, total size 0x54 (102% of destination):
+               0x3504  0x54
+    1 destination range, total size 0x52:
+          0x2000'0000  0x52
+
+
+*******************************************************************************
+*** STACK USAGE
+***
+
+  Call Graph Root Category  Max Use  Total Use
+  ------------------------  -------  ---------
+  Program entry                472        472
+  Uncalled function            480        496
+
+
+Program entry
+  "__iar_program_start": 0x379d
+
+  Maximum call chain                              472  bytes
+
+    "__iar_program_start"                           0
+    "__cmain"                                       0
+    "main"                                         56
+    "Keypad_Init"                                  16
+    "Dio_Init"                                     32
+    "printf"                                       24
+    "_PrintfFullNoMb"                             224
+    "_PutcharsFullNoMb" in xprintffull_nomb.o [4]
+                                                   24
+    "_Prout"                                       16
+    "putchar"                                       8
+    "__write"                                       8
+    "__dwrite"                                      8
+    "__iar_sh_stdout"                              24
+    "__iar_get_ttio"                               32
+    "__iar_lookup_ttioh"                            0
+
+Uncalled function
+  "UART5_Handler": 0x23bf
+
+  Maximum call chain                               16  bytes
+
+    "UART5_Handler"                                 8
+    "UART5_ReceiveChar"                             8
+    "UARTCharGet"                                   0
+
+Uncalled function
+  "FaultISR" in startup_ewarm.o [1]: 0x3797
+
+  Maximum call chain                                0  bytes
+
+    "FaultISR" in startup_ewarm.o [1]               0
+
+Uncalled function
+  "IntDefaultHandler" in startup_ewarm.o [1]: 0x3799
+
+  Maximum call chain                                0  bytes
+
+    "IntDefaultHandler" in startup_ewarm.o [1]      0
+
+Uncalled function
+  "NmiSR" in startup_ewarm.o [1]: 0x3795
+
+  Maximum call chain                                0  bytes
+
+    "NmiSR" in startup_ewarm.o [1]                  0
+
+Uncalled function
+  "ResetISR": 0x377d
+
+  Maximum call chain                              480  bytes
+
+    "ResetISR"                                      8
+    "__iar_program_start"                           0
+    "__cmain"                                       0
+    "main"                                         56
+    "Keypad_Init"                                  16
+    "Dio_Init"                                     32
+    "printf"                                       24
+    "_PrintfFullNoMb"                             224
+    "_PutcharsFullNoMb" in xprintffull_nomb.o [4]
+                                                   24
+    "_Prout"                                       16
+    "putchar"                                       8
+    "__write"                                       8
+    "__dwrite"                                      8
+    "__iar_sh_stdout"                              24
+    "__iar_get_ttio"                               32
+    "__iar_lookup_ttioh"                            0
+
+
+*******************************************************************************
+*** MODULE SUMMARY
+***
+
+    Module                 ro code  ro data  rw data
+    ------                 -------  -------  -------
+command line/config:
+    ------------------------------------------------
+    Total:
+
+C:\Users\Lenovo\Desktop\Senior-1\Fall 2025\CSE211 Introduction to Embedded Systems\Project\Door_Lock_System\HMI_ECU\Debug\Obj\APP: [1]
+    main.o                   1'364      370        6
+    startup_ewarm.o             30      620    2'048
+    ------------------------------------------------
+    Total:                   1'394      990    2'054
+
+C:\Users\Lenovo\Desktop\Senior-1\Fall 2025\CSE211 Introduction to Embedded Systems\Project\Door_Lock_System\HMI_ECU\Debug\Obj\HAL: [2]
+    KEYPAD.o                   308      112       64
+    LCD.o                      370
+    Led.o                       70
+    potentiometer.o             42
+    ------------------------------------------------
+    Total:                     790      112       64
+
+C:\Users\Lenovo\Desktop\Senior-1\Fall 2025\CSE211 Introduction to Embedded Systems\Project\Door_Lock_System\HMI_ECU\Debug\Obj\MCAL: [3]
+    ADC.o                      280
+    Dio.o                      784      332
+    I2C.o                      140
+    SYSTICK.o                   88
+    UART.o                     204
+    ------------------------------------------------
+    Total:                   1'496      332
+
+dl7M_tln.a: [4]
+    XShttio.o                    8        8        8
+    abort.o                      6
+    exit.o                       4
+    isdigit.o                   10
+    low_level_init.o             4
+    printf.o                    40
+    putchar.o                   32
+    snprintf.o                  68
+    xfail_s.o                   64        4        4
+    xprintffull_nomb.o       3'862
+    xprout.o                    22
+    xsnprout.o                  26
+    ------------------------------------------------
+    Total:                   4'146       12       12
+
+driverlib.a: [5]
+    cpu.o                        8
+    gpio.o                     768
+    i2c.o                      124
+    interrupt.o                132
+    sysctl.o                   488
+    systick.o                   40
+    uart.o                     198
+    ------------------------------------------------
+    Total:                   1'758
+
+m7M_tls.a: [6]
+    DblAddSub.o                590
+    DblCmpGe.o                  52
+    DblCmpLe.o                  52
+    DblDiv.o                   582
+    DblMul.o                   426
+    DblToS32.o                  54
+    DblToU32.o                  34
+    S32ToDbl.o                  34
+    U32ToDbl.o                  28
+    fpinit_M.o                  34
+    frexp.o                    112
+    ldexp.o                    314
+    ------------------------------------------------
+    Total:                   2'312
+
+rt7M_tl.a: [7]
+    ABImemcpy_unaligned.o      118
+    ABImemset.o                102
+    I64DivMod.o                560
+    I64DivZer.o                  2
+    cexit.o                     10
+    cmain.o                     30
+    copy_init3.o                42
+    cstartup_M.o                28
+    data_init.o                 40
+    memchr.o                    88
+    strchr.o                    22
+    strcmp.o                    18
+    strlen.o                    54
+    ------------------------------------------------
+    Total:                   1'114
+
+shb_l.a: [8]
+    dwrite.o                    30
+    exit.o                      20
+    iarttio.o                  124
+    iarwrite.o                  34
+    iarwstd.o                   32
+    write.o                     16
+    ------------------------------------------------
+    Total:                     256
+
+    Gaps                         6        4
+    Linker created                       22
+----------------------------------------------------
+    Grand Total:            13'272    1'472    2'130
+
+
+*******************************************************************************
+*** ENTRY LIST
+***
+
+Entry                       Address   Size  Type      Object
+-----                       -------   ----  ----      ------
+.iar.init_table$$Base        0x36f8          --   Gb  - Linker created -
+.iar.init_table$$Limit       0x370c          --   Gb  - Linker created -
+?main                        0x37b9         Code  Gb  cmain.o [7]
+ADC_Init                     0x2f79   0xa2  Code  Gb  ADC.o [3]
+ADC_Read                     0x301b   0x36  Code  Gb  ADC.o [3]
+CPUcpsie                     0x3459    0x8  Code  Gb  cpu.o [5]
+CheckPassword                0x227d   0xae  Code  Gb  main.o [1]
+Delay_us                     0x24e1   0x18  Code  Gb  LCD.o [2]
+Dio_Init                     0x29cd  0x142  Code  Gb  Dio.o [3]
+Dio_ReadChannel              0x2b81   0x5c  Code  Gb  Dio.o [3]
+Dio_SetPUR                   0x2bdd   0xb4  Code  Gb  Dio.o [3]
+Dio_WriteChannel             0x2b0f   0x72  Code  Gb  Dio.o [3]
+FaultISR                     0x3797    0x2  Code  Lc  startup_ewarm.o [1]
+GPIODirModeSet               0x3091   0x28  Code  Gb  gpio.o [5]
+GPIOPadConfigSet             0x30b9  0x174  Code  Gb  gpio.o [5]
+GPIOPinConfigure             0x32b9   0x38  Code  Gb  gpio.o [5]
+GPIOPinRead                  0x322d    0x6  Code  Gb  gpio.o [5]
+GPIOPinTypeGPIOInput         0x323d   0x14  Code  Gb  gpio.o [5]
+GPIOPinTypeGPIOOutput        0x3251    0xa  Code  Gb  gpio.o [5]
+GPIOPinTypeI2C               0x326d   0x14  Code  Gb  gpio.o [5]
+GPIOPinTypeI2CSCL            0x3281   0x14  Code  Gb  gpio.o [5]
+GPIOPinTypeUART              0x329d   0x14  Code  Gb  gpio.o [5]
+GPIOPinWrite                 0x3233    0x6  Code  Gb  gpio.o [5]
+GetPassword                  0x2335   0x8a  Code  Gb  main.o [1]
+I2C0_Init                    0x2eed   0x44  Code  Gb  I2C.o [3]
+I2C0_WriteByte               0x2f31   0x30  Code  Gb  I2C.o [3]
+I2CMasterBusy                0x34df    0xc  Code  Gb  i2c.o [5]
+I2CMasterControl             0x34eb    0x4  Code  Gb  i2c.o [5]
+I2CMasterDataPut             0x34ef    0x4  Code  Gb  i2c.o [5]
+I2CMasterEnable              0x34cb    0xc  Code  Gb  i2c.o [5]
+I2CMasterInitExpClk          0x3489   0x42  Code  Gb  i2c.o [5]
+I2CMasterSlaveAddrSet        0x34d7    0x8  Code  Gb  i2c.o [5]
+IntDefaultHandler            0x3799    0x2  Code  Lc  startup_ewarm.o [1]
+IntEnable                    0x288d   0x56  Code  Gb  interrupt.o [5]
+IntMasterEnable              0x287d    0x8  Code  Gb  interrupt.o [5]
+Keypad_GetKey                0x26ed   0xae  Code  Gb  KEYPAD.o [2]
+Keypad_Init                  0x267d   0x70  Code  Gb  KEYPAD.o [2]
+Lcd_Clear                    0x25cf   0x12  Code  Gb  LCD.o [2]
+Lcd_DisplayCharacter         0x2575   0x10  Code  Gb  LCD.o [2]
+Lcd_DisplayString            0x2585   0x20  Code  Gb  LCD.o [2]
+Lcd_GoToRowColumn            0x25a5   0x2a  Code  Gb  LCD.o [2]
+Lcd_Init                     0x25e1   0x72  Code  Gb  LCD.o [2]
+Lcd_SendCommand              0x2565   0x10  Code  Gb  LCD.o [2]
+Lcd_WriteI2C                 0x2545   0x20  Code  Gb  LCD.o [2]
+Lcd_Write_Nibble             0x24f9   0x4c  Code  Gb  LCD.o [2]
+Led_BlueInit                 0x244f    0xe  Code  Gb  Led.o [2]
+Led_GreenInit                0x246b    0xe  Code  Gb  Led.o [2]
+Led_GreenTurnOff             0x2479    0xe  Code  Gb  Led.o [2]
+Led_GreenTurnOn              0x245d    0xe  Code  Gb  Led.o [2]
+Led_RedInit                  0x2441    0xe  Code  Gb  Led.o [2]
+NmiSR                        0x3795    0x2  Code  Lc  startup_ewarm.o [1]
+POT_Init                     0x2653    0xa  Code  Gb  potentiometer.o [2]
+POT_ReadMapped               0x265d   0x20  Code  Gb  potentiometer.o [2]
+Region$$Table$$Base          0x36f8          --   Gb  - Linker created -
+Region$$Table$$Limit         0x370c          --   Gb  - Linker created -
+ResetISR                     0x377d   0x14  Code  Gb  startup_ewarm.o [1]
+SysCtlClockGet               0x2d41  0x110  Code  Gb  sysctl.o [5]
+SysCtlPeripheralEnable       0x2d25    0x8  Code  Gb  sysctl.o [5]
+SysCtlPeripheralReady        0x2d05    0x8  Code  Gb  sysctl.o [5]
+SysTickDisable               0x2ce9    0xc  Code  Gb  systick.o [5]
+SysTickEnable                0x2cdd    0xc  Code  Gb  systick.o [5]
+SysTickPeriodSet             0x2cf5    0x8  Code  Gb  systick.o [5]
+SysTick_Init                 0x2489   0x10  Code  Gb  SYSTICK.o [3]
+SysTick_Wait                 0x2499   0x3e  Code  Gb  SYSTICK.o [3]
+UART5_ClearInterruptFlag
+                             0x2853    0x8  Code  Gb  UART.o [3]
+UART5_Flush                  0x283d   0x16  Code  Gb  UART.o [3]
+UART5_Handler                0x23bf   0x16  Code  Gb  main.o [1]
+UART5_Init                   0x27b1   0x5a  Code  Gb  UART.o [3]
+UART5_ReceiveChar            0x281b    0xc  Code  Gb  UART.o [3]
+UART5_SendChar               0x280b   0x10  Code  Gb  UART.o [3]
+UART5_SendString             0x2827   0x16  Code  Gb  UART.o [3]
+UARTCharGet                  0x343d    0xa  Code  Gb  uart.o [5]
+UARTCharGetNonBlocking       0x342f    0xe  Code  Gb  uart.o [5]
+UARTCharPut                  0x3447    0xa  Code  Gb  uart.o [5]
+UARTCharsAvail               0x341f    0x6  Code  Gb  uart.o [5]
+UARTConfigSetExpClk          0x3391   0x4c  Code  Gb  uart.o [5]
+UARTDisable                  0x33f7   0x1e  Code  Gb  uart.o [5]
+UARTEnable                   0x33dd   0x1a  Code  Gb  uart.o [5]
+UARTIntEnable                0x3451    0x6  Code  Gb  uart.o [5]
+_LitobFullNoMb                0xf89  0x10c  Code  Lc  xprintffull_nomb.o [4]
+_PrintfFullNoMb               0x26d  0xcec  Code  Gb  xprintffull_nomb.o [4]
+_Prout                       0x3805   0x16  Code  Gb  xprout.o [4]
+_PutcharFullNoMb             0x10ed   0x20  Code  Lc  xprintffull_nomb.o [4]
+_PutcharsFullNoMb            0x110d   0x2e  Code  Lc  xprintffull_nomb.o [4]
+_SNProut                     0x11c3   0x1a  Code  Gb  xsnprout.o [4]
+__aeabi_cdcmple              0x1395         Code  Gb  DblCmpLe.o [6]
+__aeabi_cdrcmple             0x13c9         Code  Gb  DblCmpGe.o [6]
+__aeabi_d2iz                 0x1539         Code  Gb  DblToS32.o [6]
+__aeabi_d2uiz                0x1a2d         Code  Gb  DblToU32.o [6]
+__aeabi_ddiv                 0x17e5         Code  Gb  DblDiv.o [6]
+__aeabi_dmul                 0x1a6d         Code  Gb  DblMul.o [6]
+__aeabi_dsub                 0x1701         Code  Gb  DblAddSub.o [6]
+__aeabi_i2d                  0x1571         Code  Gb  S32ToDbl.o [6]
+__aeabi_ldiv0                0x1e51         Code  Gb  I64DivZer.o [7]
+__aeabi_memset               0x2901         Code  Gb  ABImemset.o [7]
+__aeabi_ui2d                 0x1a51         Code  Gb  U32ToDbl.o [6]
+__aeabi_uldivmod             0x1c19         Code  Gb  I64DivMod.o [7]
+__cmain                      0x37b9         Code  Gb  cmain.o [7]
+__dwrite                     0x373d   0x1e  Code  Gb  dwrite.o [8]
+__exit                       0x1e55   0x14  Code  Gb  exit.o [8]
+__iar_Fail_s                 0x11dd   0x1c  Code  Gb  xfail_s.o [4]
+__iar_Memchr                 0x1255         Code  Gb  memchr.o [7]
+__iar_Memset                 0x2901         Code  Gb  ABImemset.o [7]
+__iar_Memset_word            0x2909         Code  Gb  ABImemset.o [7]
+__iar_Strchr                 0x11ad         Code  Gb  strchr.o [7]
+__iar_close_ttio             0x1e69   0x2c  Code  Gb  iarttio.o [8]
+__iar_copy_init3             0x1183   0x2a  Code  Gb  copy_init3.o [7]
+__iar_data_init3             0x368d   0x28  Code  Gb  data_init.o [7]
+__iar_frexp                  0x1331         Code  Gb  frexp.o [6]
+__iar_frexpl                 0x1331         Code  Gb  frexp.o [6]
+__iar_get_ttio               0x1e95   0x4c  Code  Gb  iarttio.o [8]
+__iar_init_vfp               0x36b5         Code  Gb  fpinit_M.o [6]
+__iar_ldexp64                0x13fd         Code  Gb  ldexp.o [6]
+__iar_lookup_ttioh           0x1ee5    0x8  Code  Gb  XShttio.o [4]
+__iar_program_start          0x379d         Code  Gb  cstartup_M.o [7]
+__iar_scalbln64              0x13fd         Code  Gb  ldexp.o [6]
+__iar_scalbn64               0x13fd         Code  Gb  ldexp.o [6]
+__iar_sh_stdout              0x375b   0x20  Code  Gb  iarwstd.o [8]
+__iar_sh_write               0x36d7   0x22  Code  Gb  iarwrite.o [8]
+__iar_softfp___iar_frexp64
+                             0x1325         Code  Gb  frexp.o [6]
+__iar_softfp_frexp           0x1325         Code  Gb  frexp.o [6]
+__iar_softfp_frexpl          0x1325         Code  Gb  frexp.o [6]
+__iar_ttio_handles      0x2000'0040    0x8  Data  Lc  XShttio.o [4]
+__iar_unaligned_memcpy       0x12ad         Code  Gb  ABImemcpy_unaligned.o [7]
+__iar_unaligned_memcpy4
+                             0x12cd         Code  Gb  ABImemcpy_unaligned.o [7]
+__iar_unaligned_memcpy8
+                             0x12cd         Code  Gb  ABImemcpy_unaligned.o [7]
+__low_level_init             0x37d7    0x4  Code  Gb  low_level_init.o [4]
+__vector_table                  0x0  0x26c  Data  Gb  startup_ewarm.o [1]
+__write                      0x372d   0x10  Code  Gb  write.o [8]
+_call_main                   0x37c5         Code  Gb  cmain.o [7]
+_exit                        0x37e1         Code  Gb  cexit.o [7]
+abort                        0x1e49    0x6  Code  Gb  abort.o [4]
+data_ready              0x2000'0051    0x1  Data  Gb  main.o [1]
+exit                         0x37db    0x4  Code  Gb  exit.o [4]
+g_pui32EnRegs                0x28ec   0x14  Data  Lc  interrupt.o [5]
+g_pui32GPIOBaseAddrs         0x3300   0x90  Data  Lc  gpio.o [5]
+g_pui32Xtals                 0x2e80   0x6c  Data  Lc  sysctl.o [5]
+isdigit                      0x29c1    0xa  Code  Gb  isdigit.o [4]
+keypad_codes            0x2000'0000   0x40  Data  Gb  KEYPAD.o [2]
+ldexp                        0x13fd         Code  Gb  ldexp.o [6]
+ldexpl                       0x13fd         Code  Gb  ldexp.o [6]
+main                         0x1eed  0x382  Code  Gb  main.o [1]
+main{1}{2}{7}{8}{10}{11}{12}{13}{14}::options
+                        0x2000'0048    0x4  Data  Lc  main.o [1]
+memchr                       0x1255         Code  Gb  memchr.o [7]
+printf                       0x3461   0x28  Code  Gb  printf.o [4]
+pui32Stack              0x2000'0054  0x800  Data  Lc  startup_ewarm.o [1]
+putchar                      0x370d   0x20  Code  Gb  putchar.o [4]
+received_cmd            0x2000'0050    0x1  Data  Gb  main.o [1]
+scalbln                      0x13fd         Code  Gb  ldexp.o [6]
+scalblnl                     0x13fd         Code  Gb  ldexp.o [6]
+scalbn                       0x13fd         Code  Gb  ldexp.o [6]
+scalbnl                      0x13fd         Code  Gb  ldexp.o [6]
+scale                        0x1095   0x46  Code  Lc  xprintffull_nomb.o [4]
+sec_hand                0x2000'004c    0x4  Data  Lc  xfail_s.o [4]
+snprintf                     0x297d   0x44  Code  Gb  snprintf.o [4]
+strchr                       0x11ad         Code  Gb  strchr.o [7]
+strcmp                       0x2969         Code  Gb  strcmp.o [7]
+strlen                       0x121d         Code  Gb  strlen.o [7]
+
+
+[1] = C:\Users\Lenovo\Desktop\Senior-1\Fall 2025\CSE211 Introduction to Embedded Systems\Project\Door_Lock_System\HMI_ECU\Debug\Obj\APP
+[2] = C:\Users\Lenovo\Desktop\Senior-1\Fall 2025\CSE211 Introduction to Embedded Systems\Project\Door_Lock_System\HMI_ECU\Debug\Obj\HAL
+[3] = C:\Users\Lenovo\Desktop\Senior-1\Fall 2025\CSE211 Introduction to Embedded Systems\Project\Door_Lock_System\HMI_ECU\Debug\Obj\MCAL
+[4] = dl7M_tln.a
+[5] = driverlib.a
+[6] = m7M_tls.a
+[7] = rt7M_tl.a
+[8] = shb_l.a
+
+  13'272 bytes of readonly  code memory
+   1'472 bytes of readonly  data memory
+   2'130 bytes of readwrite data memory
+
+Errors: none
+Warnings: 3

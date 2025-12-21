@@ -1,0 +1,203 @@
+
+Call graph (*** = already visited):
+
+  Uncalled:
+  0 GPIOF_Handler [112]
+    8 Button_ClearInterrupt [0]
+    8 HardReset [104]
+      16 Memory_SavePassword [96]
+        40 Eeprom_WriteBlock [72]
+          56 EEPROMProgram [56]
+            96 SysCtlDelay [0]
+            96 _EEPROMSectorMaskSet (eeprom.o(driverlib.a)) [16]
+              96 SysCtlDelay [0] ***
+              112 SysCtlDelay [0] ***
+            96 _EEPROMSectorMaskClear (eeprom.o(driverlib.a)) [8]
+              96 SysCtlDelay [0] ***
+              104 SysCtlDelay [0] ***
+        40 __iar_Memset [8]
+          40 __iar_Memset_word [8]
+            48 - [0]
+      16 Memory_SaveTimeout [80]
+        24 Eeprom_WriteBlock [72] ***
+      16 Memory_SaveCheckFirstTime [80]
+        24 Eeprom_WriteBlock [72] ***
+    8 Led_RedTurnOff [32]
+      16 Dio_WriteChannel [24]
+        40 GPIOPinWrite [0]
+    8 Led_RedTurnOn [32]
+      16 Dio_WriteChannel [24] ***
+    8 SysTick_Wait [44]
+      32 SysCtlClockGet [20]
+        52 - [0]
+      32 SysTickDisable [0]
+      32 SysTickEnable [0]
+      32 SysTickPeriodSet [0]
+
+  Uncalled:
+  0 Timer0A_Handler_CloseDoor [52]
+    8 DoorLock_Lock [0]
+    8 GPTM_DoorTimer_ClearInt [8]
+      16 TimerIntClear [0]
+    8 GPTM_DoorTimer_Stop [8]
+      16 TimerDisable [0]
+    8 SysTick_Wait [44] ***
+
+  Uncalled:
+  0 Timer1A_Handler_StopAlarm [40]
+    8 Buzzer_Stop [32]
+      16 Dio_WriteChannel [24] ***
+    8 GPTM_AlarmTimer_ClearInt [8]
+      16 TimerIntClear [0] ***
+    8 GPTM_AlarmTimer_Stop [8]
+      16 TimerDisable [0] ***
+
+  Uncalled:
+  0 UART5_Handler [128]
+    24 Control_CheckPassword [68]
+      40 Control_ActivateAlarm [52]
+        48 Buzzer_Start [32]
+          56 Dio_WriteChannel [24] ***
+        48 GPTM_AlarmTimer_Start [16]
+          64 TimerEnable [0]
+          64 TimerLoadSet [0]
+        48 Led_RedTurnOff [32] ***
+        48 Led_RedTurnOn [32] ***
+        48 SysTick_Wait [44] ***
+      40 Buzzer_SmallBuzz [52]
+        48 Buzzer_Start [32] ***
+        48 Buzzer_Stop [32] ***
+        48 SysTick_Wait [44] ***
+      40 Led_RedTurnOff [32] ***
+      40 Led_RedTurnOn [32] ***
+      40 Memory_CheckPassword [48]
+        56 Memory_GetPassword [32]
+          64 Eeprom_ReadBlock [24]
+            80 EEPROMRead [8]
+              88 - [0]
+        56 strncmp [0]
+      40 SysTick_Wait [44] ***
+      40 UART5_SendChar [8]
+        48 UARTCharPut [0]
+    24 Control_SavePassword [104]
+      32 Led_BlueTurnOff [32]
+        40 Dio_WriteChannel [24] ***
+      32 Led_BlueTurnOn [32]
+        40 Dio_WriteChannel [24] ***
+      32 Memory_SaveCheckFirstTime [80] ***
+      32 Memory_SavePassword [96] ***
+      32 SysTick_Wait [44] ***
+    24 Control_OpenDoorSequence [52]
+      32 DoorLock_Unlock [0]
+      32 GPTM_DoorTimer_Start [16]
+        48 TimerEnable [0] ***
+        48 TimerLoadSet [0] ***
+      32 Led_GreenTurnOff [32]
+        40 Dio_WriteChannel [24] ***
+      32 Led_GreenTurnOn [32]
+        40 Dio_WriteChannel [24] ***
+      32 SysTick_Wait [44] ***
+    24 Control_ActivateAlarm [52] ***
+    24 Control_UpdateTimeout [88]
+      32 Led_BlueTurnOff [32] ***
+      32 Led_BlueTurnOn [32] ***
+      32 Memory_SaveTimeout [80] ***
+      32 SysTick_Wait [44] ***
+      32 UART5_SendChar [8] ***
+    24 UART5_CheckRxInterrupt [0]
+    24 UART5_ClearInterruptStatus [8]
+      32 UARTIntClear [0]
+    24 UART5_Flush [8]
+      32 UARTCharGetNonBlocking [0]
+      32 UARTCharsAvail [0]
+    24 UART5_GetInterruptStatus [8]
+      32 UARTIntStatus [0]
+    24 UART5_ReceiveChar [8]
+      32 UARTCharGet [0]
+    24 UART5_SendChar [8] ***
+    24 strtoul [56]
+      24 __iar_Stoulx [56]
+        80 memchr [0]
+
+  Uncalled:
+  0 FaultISR (startup_ewarm.o) [0]
+
+  Uncalled:
+  0 IntDefaultHandler (startup_ewarm.o) [0]
+
+  Uncalled:
+  0 NmiSR (startup_ewarm.o) [0]
+
+  Uncalled:
+  0 ResetISR [108]
+    8 __iar_program_start [100]
+      8 __cmain [100]
+        8 __iar_data_init3 [8]
+          16 __iar_copy_init3 [0]
+        8 __low_level_init [0]
+        8 main [100]
+          16 Control_SystemInit [92]
+            24 Button_HardReset_Init [0]
+            24 Buzzer_Init [84]
+              32 Dio_Init [76]
+                64 GPIOPinTypeGPIOInput [28]
+                  64 GPIOPadConfigSet [28]
+                    92 - [0]
+                  80 GPIODirModeSet [12]
+                    92 - [0]
+                64 GPIOPinTypeGPIOOutput [44]
+                  64 GPIODirModeSet [12] ***
+                  80 GPIOPadConfigSet [28] ***
+                64 SysCtlPeripheralEnable [0]
+                64 SysCtlPeripheralReady [0]
+            24 DoorLock_Init [4]
+              28 - [0]
+            24 GPTM_Init [20]
+              32 IntEnable [0]
+              32 SysCtlPeripheralEnable [0] ***
+              32 SysCtlPeripheralReady [0] ***
+              32 TimerConfigure [12]
+                44 - [0]
+              32 TimerIntEnable [0]
+            24 Led_BlueInit [84]
+              32 Dio_Init [76] ***
+            24 Led_GreenInit [84]
+              32 Dio_Init [76] ***
+            24 Led_RedInit [84]
+              32 Dio_Init [76] ***
+            24 Memory_Init [36]
+              32 Eeprom_Init [28]
+                40 EEPROMInit [20]
+                  48 SysCtlDelay [0] ***
+                  48 SysCtlPeripheralReset [12]
+                    60 - [0]
+                40 SysCtlPeripheralEnable [0] ***
+                40 SysCtlPeripheralReady [0] ***
+            24 UART5_Init [36]
+              32 GPIOPinConfigure [8]
+                40 - [0]
+              32 GPIOPinTypeUART [28]
+                32 GPIOPadConfigSet [28] ***
+                48 GPIODirModeSet [12] ***
+              32 IntEnable [0] ***
+              32 SysCtlPeripheralEnable [0] ***
+              32 SysCtlPeripheralReady [0] ***
+              32 UARTConfigSetExpClk [24]
+                32 UARTEnable [0]
+                56 UARTDisable [0]
+              32 UARTEnable [0] ***
+              32 UARTIntEnable [0]
+          16 Memory_GetCheckFirstTime [32]
+            24 Eeprom_ReadBlock [24] ***
+          16 Memory_GetTimeout [32]
+            24 Eeprom_ReadBlock [24] ***
+        8 exit [8]
+          8 _exit [8]
+            8 __exit [8]
+              16 - [0]
+      8 __iar_init_vfp [0]
+
+  Program entry:
+  0 __iar_program_start [100] ***
+
+

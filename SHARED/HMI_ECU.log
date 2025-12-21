@@ -1,0 +1,232 @@
+
+Call graph (*** = already visited):
+
+  Uncalled:
+  0 UART5_Handler [16]
+    8 UART5_ClearInterruptFlag [0]
+    8 UART5_ReceiveChar [8]
+      16 UARTCharGet [0]
+
+  Uncalled:
+  0 FaultISR (startup_ewarm.o) [0]
+
+  Uncalled:
+  0 IntDefaultHandler (startup_ewarm.o) [0]
+
+  Uncalled:
+  0 NmiSR (startup_ewarm.o) [0]
+
+  Uncalled:
+  0 ResetISR [480]
+    8 __iar_program_start [472]
+      8 __cmain [472]
+        8 __iar_data_init3 [8]
+          16 __iar_copy_init3 [0]
+        8 __low_level_init [0]
+        8 main [472]
+          64 CheckPassword [128]
+            80 GetPassword [112]
+              104 Keypad_GetKey [56]
+                136 Dio_ReadChannel [24]
+                  160 GPIOPinRead [0]
+                136 Dio_WriteChannel [24]
+                  160 GPIOPinWrite [0]
+              104 Lcd_DisplayCharacter [72]
+                112 Lcd_WriteI2C [64]
+                  128 Lcd_Write_Nibble [48]
+                    160 Delay_us [0]
+                    160 I2C0_WriteByte [16]
+                      176 I2CMasterBusy [0]
+                      176 I2CMasterControl [0]
+                      176 I2CMasterDataPut [0]
+                      176 I2CMasterSlaveAddrSet [0]
+              104 Lcd_DisplayString [88]
+                120 Lcd_DisplayCharacter [72] ***
+              104 Lcd_GoToRowColumn [88]
+                120 Lcd_SendCommand [72]
+                  128 Lcd_WriteI2C [64] ***
+              104 SysTick_Wait [44]
+                128 SysCtlClockGet [20]
+                  148 - [0]
+                128 SysTickDisable [0]
+                128 SysTickEnable [0]
+                128 SysTickPeriodSet [0]
+              104 __iar_Memset [8]
+                104 __iar_Memset_word [8]
+                  112 - [0]
+              104 isdigit [0]
+              104 strcmp [0]
+            80 Lcd_Clear [80]
+              88 Delay_us [0] ***
+              88 Lcd_SendCommand [72] ***
+            80 Lcd_DisplayString [88] ***
+            80 Lcd_GoToRowColumn [88] ***
+            80 Led_GreenTurnOff [32]
+              88 Dio_WriteChannel [24] ***
+            80 Led_GreenTurnOn [32]
+              88 Dio_WriteChannel [24] ***
+            80 SysTick_Wait [44] ***
+            80 UART5_Flush [8]
+              88 UARTCharGetNonBlocking [0]
+              88 UARTCharsAvail [0]
+            80 UART5_SendChar [8]
+              88 UARTCharPut [0]
+            80 UART5_SendString [16]
+              88 UART5_SendChar [8] ***
+          64 GetPassword [112] ***
+          64 IntMasterEnable [8]
+            72 CPUcpsie [0]
+          64 Keypad_GetKey [56] ***
+          64 Keypad_Init [416]
+            80 Dio_Init [400]
+              112 GPIOPinTypeGPIOInput [28]
+                112 GPIOPadConfigSet [28]
+                  140 - [0]
+                128 GPIODirModeSet [12]
+                  140 - [0]
+              112 GPIOPinTypeGPIOOutput [44]
+                112 GPIODirModeSet [12] ***
+                128 GPIOPadConfigSet [28] ***
+              112 SysCtlPeripheralEnable [0]
+              112 SysCtlPeripheralReady [0]
+              112 printf [368]
+                136 _PrintfFullNoMb [344]
+                  360 _Prout [96]
+                    376 putchar [80]
+                      384 __write [72]
+                        392 __dwrite [64]
+                          400 __iar_sh_stdout [56]
+                            424 __iar_get_ttio [32]
+                              456 __iar_lookup_ttioh [0]
+                          400 __iar_sh_write [24]
+                            424 - [0]
+                  360 _LitobFullNoMb (xprintffull_nomb.o(dl7M_tln.a)) [36]
+                    396 __aeabi_uldivmod [0]
+                      396 __aeabi_ldiv0 [0]
+                  360 scale (xprintffull_nomb.o(dl7M_tln.a)) [36]
+                    384 __aeabi_dmul [12]
+                      396 - [0]
+                  360 _PutcharFullNoMb (xprintffull_nomb.o(dl7M_tln.a)) [104]
+                    368 _Prout [96] ***
+                  360 _PutcharsFullNoMb (xprintffull_nomb.o(dl7M_tln.a)) [120]
+                    384 _Prout [96] ***
+                  360 __aeabi_cdcmple [0]
+                  360 __aeabi_cdrcmple [0]
+                  360 __aeabi_d2iz [0]
+                  360 __aeabi_d2uiz [0]
+                  360 __aeabi_ddiv [20]
+                    380 - [0]
+                  360 __aeabi_dmul [12] ***
+                  360 __aeabi_dsub [24]
+                    372 __iar_dsub (DblAddSub.o(m7M_tls.a)) [12]
+                      384 - [0]
+                    372 __iar_dadd (DblAddSub.o(m7M_tls.a)) [12]
+                      384 - [0]
+                  360 __aeabi_i2d [0]
+                  360 __iar_unaligned_memcpy [8]
+                    360 __iar_unaligned_memcpy4 [8]
+                      368 - [0]
+                  360 __aeabi_ui2d [0]
+                  360 __iar_Fail_s [24]
+                    368 abort [16]
+                      368 __exit [16]
+                        376 __iar_close_ttio [8]
+                          384 __iar_lookup_ttioh [0] ***
+                  360 __iar_softfp_frexp [8]
+                    368 __iar_frexp [0]
+                  360 ldexp [0]
+                  360 memchr [0]
+                  360 strchr [0]
+                  360 strlen [0]
+            80 Dio_SetPUR [52]
+              104 GPIOPadConfigSet [28] ***
+            80 Dio_WriteChannel [24] ***
+          64 Lcd_Clear [80] ***
+          64 Lcd_DisplayString [88] ***
+          64 Lcd_GoToRowColumn [88] ***
+          64 Lcd_Init [80]
+            72 Delay_us [0] ***
+            72 Lcd_Write_Nibble [48] ***
+            72 Lcd_SendCommand [72] ***
+            72 I2C0_Init [36]
+              80 GPIOPinConfigure [8]
+                88 - [0]
+              80 GPIOPinTypeI2C [28]
+                80 GPIOPadConfigSet [28] ***
+                96 GPIODirModeSet [12] ***
+              80 GPIOPinTypeI2CSCL [28]
+                80 GPIOPadConfigSet [28] ***
+                96 GPIODirModeSet [12] ***
+              80 I2CMasterInitExpClk [16]
+                96 I2CMasterEnable [0]
+              80 SysCtlClockGet [20] ***
+              80 SysCtlPeripheralEnable [0] ***
+              80 SysCtlPeripheralReady [0] ***
+          64 Led_BlueInit [408]
+            72 Dio_Init [400] ***
+          64 Led_GreenInit [408]
+            72 Dio_Init [400] ***
+          64 Led_RedInit [408]
+            72 Dio_Init [400] ***
+          64 POT_Init [12]
+            72 ADC_Init [4]
+              76 - [0]
+          64 POT_ReadMapped [20]
+            80 ADC_Read [4]
+              84 - [0]
+          64 SysTick_Init [8]
+            72 SysTickDisable [0] ***
+            72 SysTickPeriodSet [0] ***
+          64 SysTick_Wait [44] ***
+          64 UART5_Flush [8] ***
+          64 UART5_Init [36]
+            72 GPIOPinConfigure [8] ***
+            72 GPIOPinTypeUART [28]
+              72 GPIOPadConfigSet [28] ***
+              88 GPIODirModeSet [12] ***
+            72 IntEnable [0]
+            72 SysCtlPeripheralEnable [0] ***
+            72 SysCtlPeripheralReady [0] ***
+            72 UARTConfigSetExpClk [24]
+              72 UARTEnable [0]
+              96 UARTDisable [0]
+            72 UARTEnable [0] ***
+            72 UARTIntEnable [0]
+          64 UART5_SendChar [8] ***
+          64 UART5_SendString [16] ***
+          64 __iar_Memset [8] ***
+          64 snprintf [300]
+            104 _PrintfFullNoMb [260]
+              328 _SNProut [0]
+              328 _LitobFullNoMb (xprintffull_nomb.o(dl7M_tln.a)) [36] ***
+              328 scale (xprintffull_nomb.o(dl7M_tln.a)) [36] ***
+              328 _PutcharFullNoMb (xprintffull_nomb.o(dl7M_tln.a)) [8]
+                336 _SNProut [0] ***
+              328 _PutcharsFullNoMb (xprintffull_nomb.o(dl7M_tln.a)) [24]
+                352 _SNProut [0] ***
+              328 __aeabi_cdcmple [0] ***
+              328 __aeabi_cdrcmple [0] ***
+              328 __aeabi_d2iz [0] ***
+              328 __aeabi_d2uiz [0] ***
+              328 __aeabi_ddiv [20] ***
+              328 __aeabi_dmul [12] ***
+              328 __aeabi_dsub [24] ***
+              328 __aeabi_i2d [0] ***
+              328 __iar_unaligned_memcpy [8] ***
+              328 __aeabi_ui2d [0] ***
+              328 __iar_Fail_s [24] ***
+              328 __iar_softfp_frexp [8] ***
+              328 ldexp [0] ***
+              328 memchr [0] ***
+              328 strchr [0] ***
+              328 strlen [0] ***
+          64 strcmp [0] ***
+        8 exit [16]
+          8 _exit [16]
+            8 __exit [16] ***
+      8 __iar_init_vfp [0]
+
+  Program entry:
+  0 __iar_program_start [472] ***
+
+
