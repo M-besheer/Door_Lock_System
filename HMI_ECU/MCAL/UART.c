@@ -2,20 +2,14 @@
  * File: uart.c
  * Module: UART (Universal Asynchronous Receiver/Transmitter)
  * Description: Source file for TM4C123GH6PM UART5 Driver (TivaWare)
- * Author: Ahmedhh
- * Date: December 10, 2025
+ * Date: December 21, 2025
  * * Configuration:
  * - UART5 (PE4: RX, PE5: TX)
- * - Baud Rate: 115200
- * - Data: 8 bits
- * - Parity: None
- * - Stop: 1 bit
- * - System Clock: 16 MHz
  **************************/
+
+#include "uart.h"
 #include <stdint.h>
 #include <stdbool.h>
-#include "uart.h"
-
 
 /* TivaWare includes */
 #include "inc/hw_memmap.h"
@@ -24,6 +18,8 @@
 #include "driverlib/gpio.h"
 #include "driverlib/uart.h"
 #include "driverlib/pin_map.h"
+#include "tm4c123gh6pm.h"
+#include "driverlib/interrupt.h"
 
 /**************************
  * Definitions                                *
@@ -40,10 +36,9 @@
  * UART5_Init
  * Initializes UART5 with 115200 baud rate, 8N1 configuration using TivaWare.
  */
-void UART0_Init(void)
+void UART5_Init(void)
 {
     /* 1. Enable peripheral clocks for UART5 and GPIOE */
-    /* CHANGED: UART0 -> UART5, GPIOA -> GPIOE */
     SysCtlPeripheralEnable(SYSCTL_PERIPH_UART5);
     SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOE);
     
@@ -63,13 +58,16 @@ void UART0_Init(void)
     GPIOPinTypeUART(GPIO_PORTE_BASE, GPIO_PIN_4 | GPIO_PIN_5);
     
     /* 3. Configure UART parameters */
-    /* CHANGED: UART0_BASE -> UART5_BASE */
     UARTConfigSetExpClk(UART5_BASE, SYSTEM_CLOCK, BAUD_RATE,
                         (UART_CONFIG_WLEN_8 | UART_CONFIG_STOP_ONE | 
                          UART_CONFIG_PAR_NONE));
     
     /* 4. Enable UART5 */
-    /* CHANGED: UART0_BASE -> UART5_BASE */
+    UARTIntEnable(UART5_BASE, UART_INT_RX | UART_INT_RT);
+    
+    // Enable the UART5 interrupt in the NVIC
+    IntEnable(INT_UART5);
+
     UARTEnable(UART5_BASE);
 }
 
@@ -77,9 +75,8 @@ void UART0_Init(void)
  * UART5_SendChar
  * Transmits a single character through UART5 using TivaWare.
  */
-void UART0_SendChar(char data)
+void UART5_SendChar(char data)
 {
-    /* CHANGED: UART0_BASE -> UART5_BASE */
     UARTCharPut(UART5_BASE, data);
 }
 
@@ -87,9 +84,8 @@ void UART0_SendChar(char data)
  * UART5_ReceiveChar
  * Receives a single character from UART5 using TivaWare.
  */
-char UART0_ReceiveChar(void)
+char UART5_ReceiveChar(void)
 {
-    /* CHANGED: UART0_BASE -> UART5_BASE */
     return (char)UARTCharGet(UART5_BASE);
 }
 
@@ -97,11 +93,11 @@ char UART0_ReceiveChar(void)
  * UART5_SendString
  * Transmits a null-terminated string through UART5.
  */
-void UART0_SendString(const char *str)
+void UART5_SendString(const char *str)
 {
     while (*str != '\0')
     {
-        UART0_SendChar(*str);
+        UART5_SendChar(*str);
         str++;
     }
 }
@@ -110,18 +106,18 @@ void UART0_SendString(const char *str)
  * UART5_IsDataAvailable
  * Checks if data is available in the receive FIFO using TivaWare.
  */
-uint8_t UART0_IsDataAvailable(void)
+uint8_t UART5_IsDataAvailable(void)
 {
-    /* CHANGED: UART0_BASE -> UART5_BASE */
     return (UARTCharsAvail(UART5_BASE)) ? 1 : 0;
 }
 
+
 /*
- * UART0_Flush
+ * UART5_Flush
  * Flushes the UART5 receive FIFO to discard garbage data.
  * Useful for clearing noise spikes or old commands.
  */
-void UART0_Flush(void)
+void UART5_Flush(void)
 {
     /* CHANGED: Checking UART5_BASE for available characters */
     while (UARTCharsAvail(UART5_BASE))
@@ -129,4 +125,37 @@ void UART0_Flush(void)
         /* Read and discard the character from UART5 Data Register */
         UARTCharGetNonBlocking(UART5_BASE);
     }
+}
+/*
+ * Function: UART5_GetInterruptStatus
+ * Description: Returns the masked interrupt status of UART5.
+ * This replaces: UARTIntStatus(UART5_BASE, true)
+ */
+uint32_t UART5_GetInterruptStatus(void)
+{
+    return UARTIntStatus(UART5_BASE, true);
+}
+
+/*
+ * Function: UART5_CheckRxInterrupt
+ * Description: Checks if the triggered interrupt was caused by 
+ * Receive (RX) or Receive Timeout (RT).
+ */
+bool UART5_CheckRxInterrupt(uint32_t status)
+{
+    if (status & (UART_INT_RX | UART_INT_RT))
+    {
+        return true;
+    }
+    return false;
+}
+
+/*
+ * Function: UART5_ClearInterruptStatus
+ * Description: Clears the specific interrupt flags for UART5.
+ * This replaces: UARTIntClear(UART5_BASE, status)
+ */
+void UART5_ClearInterruptStatus(uint32_t status)
+{
+    UARTIntClear(UART5_BASE, status);
 }
